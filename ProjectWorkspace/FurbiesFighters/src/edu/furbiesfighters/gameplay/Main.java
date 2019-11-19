@@ -23,7 +23,9 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;;
+import javafx.stage.Stage;
+import jneat.Neat;
+import jneat.Population;
 /**
  * Class for maintaining the application.
  * @author Furbies Fighters
@@ -39,6 +41,13 @@ public class Main extends Application
 	 */
 	public static void main(String[] args) 
 	{
+		Population neatPop = new Population(
+				30 /* population size */, 
+				9 /* network inputs */ , 
+				2 /* network outputs */, 
+				5 /* max index of nodes */, 
+				true /* recurrent */, 
+				0.5 /* probability of connecting two nodes */ );
 		Utility.isGUI = false;
 		String gamePlay = Utility.prompt("Type \"0\" for command line or \"1\" for GUI gameplay: ");
 		if(gamePlay.contentEquals("0"))
