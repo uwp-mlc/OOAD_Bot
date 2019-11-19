@@ -1,0 +1,5 @@
+package edu.furbiesfighters.events;
+
+public class AttackEventShootTheMoon {
+
+}

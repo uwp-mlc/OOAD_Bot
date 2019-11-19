@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename method &apos;Player.valadateSkill(...)&apos; to &apos;valaditeSkill&apos;&#x0D;&#x0A;- Original project: &apos;FurbiesFighters&apos;&#x0D;&#x0A;- Original element: &apos;Player.valadateSkill(...)&apos;&#x0D;&#x0A;- Renamed element: &apos;Player.valaditeSkill(...)&apos;&#x0D;&#x0A;- Update references to refactored element" delegate="false" deprecate="false" description="Rename method &apos;valadateSkill&apos;" flags="589826" id="org.eclipse.jdt.ui.rename.method" input="/src&lt;{Player.java[Player~valadateSkill~QSkills;" name="valaditeSkill" references="true" stamp="1540431338637" version="1.0"/>
+</session>

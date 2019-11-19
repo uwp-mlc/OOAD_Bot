@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item value="false" key="isRegEx"/>
+		<item value="Fight" key="selection"/>
+		<item value="false" key="casesensitive"/>
+		<item value="false" key="incremental"/>
+		<item value="true" key="wrap"/>
+		<item value="false" key="wholeword"/>
+		<list key="findhistory">
+			<item value="fight"/>
+			<item value="fightCount"/>
+			<item value="setRec"/>
+			<item value="decrement"/>
+			<item value="previousOpponentSkill"/>
+			<item value="setCha"/>
+			<item value=".show()"/>
+			<item value="setFightNumber"/>
+			<item value="set"/>
+			<item value="fightNumber"/>
+			<item value="ADDING"/>
+			<item value="getCurrentPlayableSkillStringList"/>
+			<item value="(none)"/>
+			<item value="Utility"/>
+			<item value="chooseSkill"/>
+		</list>
+		<list key="replacehistory">
+			<item value="double"/>
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item value="379" key="DIALOG_WIDTH"/>
+		<item value="1|Segoe UI|9.0|0|WINDOWS|1|-36|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI" key="DIALOG_FONT_NAME"/>
+		<item value="481" key="DIALOG_HEIGHT"/>
+		<item value="1348" key="DIALOG_X_ORIGIN"/>
+		<item value="249" key="DIALOG_Y_ORIGIN"/>
+	</section>
+</section>
