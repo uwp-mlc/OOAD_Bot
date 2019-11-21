@@ -14,6 +14,7 @@ import edu.furbiesfighters.events.FightStartEvent.FightStartEventBuilder;
 import edu.furbiesfighters.players.AIPlayer;
 import edu.furbiesfighters.players.Human;
 import edu.furbiesfighters.players.JarvisPlayer;
+import edu.furbiesfighters.players.AverageJoe;
 import edu.furbiesfighters.players.PetTypes;
 import edu.furbiesfighters.utility.Utility;
 
@@ -37,6 +38,18 @@ public class Battle extends Observable
 	
 	protected Fight currentFight;
 	
+	int neat_count;
+	int opponent_count;
+	int human_count;
+	
+	List<String> neat_names;
+	List<String> opponent_names;
+	List<String> human_names;
+	
+	List<Integer> neat_types;
+	List<Integer> opponent_types;
+	List<Integer> human_types;
+	
 	/**
 	 * Instantiates the Battle class. It will instantiate the variables.
 	 */
@@ -57,6 +70,25 @@ public class Battle extends Observable
 		this.ref = ref;
 		this.fightAmount = fightAmount;
 	}
+	
+	public Battle(int neat_count, int opponent_count, int human_count, 
+			List<String> neat_names, List<String> opponent_names, List<String> human_names, int fight_amount,
+			List<Integer> neat_types, List<Integer> opponent_types, List<Integer> human_types) {
+		this.neat_count = neat_count;
+		this.opponent_count = opponent_count;
+		this.human_count = human_count;
+		this.neat_names = neat_names;
+		this.opponent_names = opponent_names;
+		this.human_names = human_names;
+		this.fightAmount = fight_amount;
+		this.human_types = human_types;
+		this.opponent_types = opponent_types;
+		this.neat_types = neat_types;
+		
+		fightList = new ArrayList<Fight>();
+		this.ref = new Referee();
+	}
+	
 
 	/**
 	 * Method to instantiate the variables for the class. It gets all
@@ -64,26 +96,9 @@ public class Battle extends Observable
 	 */
 	public void setUpBattle()
 	{
-		int aiPlayersNeeded = this.MINIMUM_PLAYERS;
-		int smartAiPlayersNeeded = 0;
-		this.ref = new Referee();
-		this.currentFight = null;
-		this.fightList = new ArrayList<Fight>();
-		humanAmount = getHumanAmount();
-		aiPlayersNeeded -= humanAmount;
-		if(aiPlayersNeeded < 0)
-			aiPlayersNeeded = 0;
-		aiAmount = getAiAmount();
-		smartAiPlayersNeeded = aiPlayersNeeded - aiAmount;
-		if(smartAiPlayersNeeded < 0)
-			smartAiPlayersNeeded = 0;
-		smartAiPlayersNeeded = getSmartAiAmount(smartAiPlayersNeeded);
-		this.smartAiAmount = smartAiPlayersNeeded;
-		fightAmount = getFightAmount();
-		
 		Utility.printEndline();
 
-		getAllAIPlayerInformation();
+		this.getAllNeatAIPlayerInformation();
 		getAllSmartAIPlayerInformation();
 		getAllHumanPlayerInformation();
 		setFights();
@@ -126,116 +141,7 @@ public class Battle extends Observable
 			this.ref.addEvent(fsb.build());
 			currentFight.playFight();
 			announceFightResults();
-			//announcePlayerInformation();
-			//FightStartEvent fse = fsb.build();
-			//this.ref.addEvent(fse);
 		}
-	}
-	
-	/**
-	 * Method for getting the amount of players in the battle. It will
-	 * check to see if the input is valid.
-	 * @return playerAmount, the amount of players in the battle.
-	 */
-	private int getHumanAmount()
-	{
-		String unformattedAmount;
-		int formattedAmount;
-		boolean isValidInteger;
-		
-		
-		unformattedAmount = Utility.prompt("Enter the amount of human players for this battle:");
-		isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, 0);
-		
-		while (!isValidInteger)
-		{
-			unformattedAmount = Utility.prompt("Enter a valid integer human player amount for this battle:");
-			isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, 0);
-		}
-		
-		formattedAmount = Integer.parseInt(unformattedAmount);
-		
-		return formattedAmount;
-	}
-	
-	/**
-	 * Method for getting the amount of AI players in the battle. It will
-	 * check to see if the input is valid.
-	 * @return playerAmount, the amount of players in the battle.
-	 */
-	//private int getAiAmount(int aiPlayersNeeded)
-	private int getAiAmount()
-	{
-		String unformattedAmount;
-		int formattedAmount;
-		boolean isValidInteger;
-		
-		
-		unformattedAmount = Utility.prompt("Enter the amount of AI players for this battle:");
-		//isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, aiPlayersNeeded);
-		isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, 0);
-		
-		while (!isValidInteger)
-		{
-			//unformattedAmount = Utility.prompt("Must have at least " + aiPlayersNeeded + " smart AI players. Please retry:");
-			unformattedAmount = Utility.prompt("Enter a valid integer AI player amount for this battle:");
-			isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, 0);
-		}
-		
-		formattedAmount = Integer.parseInt(unformattedAmount);
-		
-		return formattedAmount;
-	}
-		
-	/**
-	 * Method for getting the amount of players in the battle. It will
-	 * check to see if the input is valid.
-	 * @return playerAmount, the amount of players in the battle.
-	 */
-	private int getSmartAiAmount(int smartAiPlayersNeeded)
-	{
-		String unformattedAmount;
-		int formattedAmount;
-		boolean isValidInteger;
-		
-		
-		unformattedAmount = Utility.prompt("Enter the amount of smart AI players for this battle:");
-		isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, smartAiPlayersNeeded);
-		
-		while (!isValidInteger)
-		{
-			unformattedAmount = Utility.prompt("Must have at least " + smartAiPlayersNeeded + " smart AI players. Please retry:");
-			isValidInteger = Utility.isValidIntegerAmount(unformattedAmount, smartAiPlayersNeeded);
-		}
-		
-		formattedAmount = Integer.parseInt(unformattedAmount);
-		
-		return formattedAmount;
-	}
-	/**
-	 * Method for getting the amount of fights in the battle. It will
-	 * check to see if the input is valid.
-	 * @return fightAmount, the amount of fights in the battle.
-	 */
-	private int getFightAmount()
-	{
-		String unformattedFightAmount;
-		int formattedFightAmount;
-		boolean isValid;
-		
-		unformattedFightAmount = Utility.prompt("Enter the amount of fights in this battle:");
-		
-		isValid = Utility.isValidIntegerAmount(unformattedFightAmount, MINIMUM_FIGHTS);
-		
-		while (!isValid)
-		{
-			unformattedFightAmount = Utility.prompt("Enter a valid integer amount of fights in this battle:");
-			isValid = Utility.isValidIntegerAmount(unformattedFightAmount, MINIMUM_FIGHTS);
-		}
-		
-		formattedFightAmount = Integer.parseInt(unformattedFightAmount);
-		
-		return formattedFightAmount;
 	}
 	
 	/**
@@ -273,13 +179,13 @@ public class Battle extends Observable
 		int playerHealth;
 		Playable player;
 		
-		for (int i = 0; i < humanAmount; i++)
+		for (int i = 0; i < this.human_count; i++)
 		{
 			playerIndex = i + 1;
-			playerName = getPlayerName(playerIndex);
-			playerType = getPlayerType(playerName);
-			playerHealth = getPlayerHealth();
-			petName = getPetName();
+			playerName = this.human_names.get(i);
+			playerType = PetTypes.values()[this.human_types.get(i)];
+			playerHealth = 100;
+			petName = this.human_names.get(i);
 			
 			Utility.printEndline();
 			
@@ -296,35 +202,6 @@ public class Battle extends Observable
 	 * playerAmount, ask for the player information, and instantiate the
 	 * player's information.
 	 */
-	private void getAllAIPlayerInformation()
-	{
-		String playerName;
-		String petName;
-		PetTypes playerType;
-		int playerHealth;
-		Playable player;
-		
-		for (int i = 0; i < aiAmount; i++)
-		{
-			playerName = "AI Player " + (i + 1);
-			Utility.printMessage(playerName + ":");
-			playerType = getPlayerType(playerName);
-			playerHealth = getPlayerHealth();
-			petName = getPetName();
-			
-			Utility.printEndline();
-			
-			player = new AIPlayer(playerHealth, playerName, petName, playerType);
-			
-			this.ref.addPlayer(player);
-		}
-	}
-	
-	/**
-	 * Method for getting all the player information. It will loop for the
-	 * playerAmount, ask for the player information, and instantiate the
-	 * player's information.
-	 */
 	private void getAllSmartAIPlayerInformation()
 	{
 		String playerName;
@@ -333,13 +210,13 @@ public class Battle extends Observable
 		int playerHealth;
 		Playable player;
 		
-		for (int i = 0; i < this.smartAiAmount; i++)
+		for (int i = 0; i < this.opponent_count; i++)
 		{
 			playerName = "Jarvis " + (i + 1);
 			Utility.printMessage(playerName + ":");
-			playerType = getPlayerType(playerName);
-			playerHealth = getPlayerHealth();
-			petName = getPetName();
+			playerType = PetTypes.values()[this.opponent_types.get(i)];
+			playerHealth = 100;
+			petName = this.opponent_names.get(i);
 			
 			Utility.printEndline();
 			
@@ -350,124 +227,34 @@ public class Battle extends Observable
 	}
 	
 	/**
-	 * Get health
-	 * @return
+	 * Method for getting all the player information. It will loop for the
+	 * playerAmount, ask for the player information, and instantiate the
+	 * player's information.
 	 */
-	private int getPlayerHealth()
-	{
-		String unformattedSeed;
-		int formattedSeed;
-		
-		unformattedSeed = Utility.prompt("Enter the player's health");
-		
-		while (!Utility.isValidIntegerAmount(unformattedSeed, 0))
-		{
-			unformattedSeed = Utility.prompt("Enter a valid integer health:");
-		}
-		
-		formattedSeed = Integer.parseInt(unformattedSeed);
-		
-		return formattedSeed;
-	}
-	
-	/**
-	 * Method for getting the player name. It will check to see if the
-	 * player's name is valid.
-	 * @param playerIndex - the index used to address the player.
-	 * @return playerName, the name of the player.
-	 */
-	private String getPlayerName(int playerIndex)
+	private void getAllNeatAIPlayerInformation()
 	{
 		String playerName;
-		boolean isValid;
-		
-		playerName = "";
-		isValid = false;
-		
-		playerName = Utility.prompt("Player " + (playerIndex) + ", enter your name:");
-		
-		while (!isValid)
-		{
-			if (playerName.length() != 0)
-			{
-				isValid = true;
-			}
-			else
-			{
-				playerName = Utility.prompt("Player " + (playerIndex) + ", enter a valid name:");
-			}
-		}
-		
-		return playerName;
-	}
-	
-	/**
-	 * Method for getting the pet name. It will check to see if the pet
-	 * name is valid.
-	 * @return petName, the name of the player's pet.
-	 */
-	private String getPetName()
-	{
-		String playerName;
-		boolean isValid;
-		
-		playerName = "";
-		isValid = false;
-		
-		playerName = Utility.prompt("Enter your pets name:");
-		
-		while (!isValid)
-		{			
-			if (playerName.length() != 0)
-			{
-				isValid = true;
-			}
-			else
-			{
-				playerName = Utility.prompt("Enter a valid pet name:");
-			}
-		}
-		
-		return playerName;
-	}
-	
-	/**
-	 * Method for getting the player's type. It will check to see if
-	 * the type is valid.
-	 * @param playerName - the name of the player to be addressed.
-	 * @return playerType, the type of pet the player wants.
-	 */
-	private PetTypes getPlayerType(String playerName)
-	{
-		String playerSelection;
+		String petName;
 		PetTypes playerType;
-
-		playerType = null;
+		int playerHealth;
+		Playable player;
 		
-		while (playerType == null)
+		for (int i = 0; i < this.neat_count; i++)
 		{
-			playerSelection = Utility.prompt("Enter 1 for \"INTELLIGENCE\", 2 for \"SPEED\", or 3 for \"POWER\""
-					+ "\n" + "Player " + playerName + ", enter your type:");
+			playerName = "Average Joe " + (i + 1);
+			Utility.printMessage(playerName + ":");
+			playerType = PetTypes.values()[this.neat_types.get(i)];
+			playerHealth = 100;
+			petName = this.neat_names.get(i);
 			
-			switch(playerSelection)
-			{
-			case "1":
-				playerType = PetTypes.INTELLIGENCE;
-				break;
-			case "2":
-				playerType = PetTypes.SPEED;
-				break;
-			case "3":
-				playerType = PetTypes.POWER;
-				break;
-			default:
-				playerType = null;
-				Utility.printMessage("Invalid entry, try again...");
-				break;
-			}
+			Utility.printEndline();
+			
+			player = new AverageJoe(playerHealth, playerName, petName, playerType);
+			
+			this.ref.addPlayer(player);
 		}
-		return playerType;
 	}
+
 
 	/**
 	 * Method for announcing the information for all players. It will

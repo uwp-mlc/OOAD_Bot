@@ -19,14 +19,43 @@ public class BattleController
 	
 	protected Referee ref;							
 	
+	int neat_count;
+	int opponent_count;
+	int human_count;
+	
+	List<String> neat_names;
+	List<String> opponent_names;
+	List<String> human_names;
+	
+	int fight_amount;
+	
+	List<Integer> neat_types;
+	List<Integer> opponent_types;
+	List<Integer> human_types;
 	
 	/**
 	 * Constructor for Battle. It instantiates the currentBattle and input.
 	 */
-	public BattleController()
+	public BattleController(int neat_count, int opponent_count, int human_count, 
+			List<String> neat_names, List<String> opponent_names, List<String> human_names, int fight_amount,
+			List<Integer> neat_types, List<Integer> opponent_types, List<Integer> human_types)
 	{
-		currentBattle = new Battle();
+		this.neat_count = neat_count;
+		this.opponent_count = opponent_count;
+		this.human_count = human_count;
+		this.neat_names = neat_names;
+		this.opponent_names = opponent_names;
+		this.human_names = human_names;
+		this.fight_amount = fight_amount;
+		this.human_types = human_types;
+		this.opponent_types = opponent_types;
+		this.neat_types = neat_types;
+		
+		this.currentBattle = new Battle(neat_count, opponent_count, human_count, neat_names, 
+				opponent_names, human_names, fight_amount, neat_types, opponent_types, human_types);
+		//this.currentBattle = new Battle();
 	}
+	
 	
 	/**
 	 * Method for playing each battle. It will loop and let the player
@@ -44,7 +73,7 @@ public class BattleController
 			Utility.printLargeBanner("New Battle Beginning");
 			
 			this.ref = new Referee();
-			currentBattle = new Battle();
+			//currentBattle = new Battle();
 			currentBattle.setUpBattle();
 			currentBattle.playBattle();
 			

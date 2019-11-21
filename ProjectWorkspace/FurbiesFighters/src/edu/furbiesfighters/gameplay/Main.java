@@ -1,6 +1,7 @@
 package edu.furbiesfighters.gameplay;
 
 import java.io.IOException;
+import java.util.List;
 
 import edu.furbiesfighters.players.AIPlayer;
 import edu.furbiesfighters.players.Human;
@@ -24,8 +25,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import jneat.Neat;
-import jneat.Population;
+
+import jneat.*;
+
 /**
  * Class for maintaining the application.
  * @author Furbies Fighters
@@ -35,36 +37,50 @@ public class Main extends Application
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	
+	int neat_count;
+	int opponent_count;
+	int human_count;
+	
+	List<String> neat_names;
+	List<String> opponent_names;
+	List<String> human_names;
+	
+	int fight_amount;
+	
+	List<Integer> neat_types;
+	List<Integer> opponent_types;
+	List<Integer> human_types;
+	
+	public Main(int neat_count, int opponent_count, int human_count, List<String> neat_names, 
+			List<String> opponent_names, List<String> human_names, int fight_amount, List<Integer> neat_types,
+			List<Integer> opponent_types, List<Integer> human_types) {
+		this.neat_count = neat_count;
+		this.opponent_count = opponent_count;
+		this.human_count = human_count;
+		this.neat_names = neat_names;
+		this.opponent_names = opponent_names;
+		this.human_names = human_names;
+		this.fight_amount = fight_amount;
+		this.human_types = human_types;
+		this.opponent_types = opponent_types;
+		this.neat_types = neat_types;
+	}
+	
 	/**
 	 * Main point of entry for the system. Plays the game.
 	 * @param args
 	 */
-	public static void main(String[] args) 
+	public void game() 
 	{
-		Population neatPop = new Population(
-				30 /* population size */, 
-				9 /* network inputs */ , 
-				2 /* network outputs */, 
-				5 /* max index of nodes */, 
-				true /* recurrent */, 
-				0.5 /* probability of connecting two nodes */ );
+		//Population neatPop = new Population(30 /* population size */, 9 /* network inputs */ , 2 /* network outputs */, 5 /* max index of nodes */, true /* recurrent */, 0.5 /* probability of connecting two nodes */ );
+		
 		Utility.isGUI = false;
-		String gamePlay = Utility.prompt("Type \"0\" for command line or \"1\" for GUI gameplay: ");
+		String gamePlay = "0"; // Utility.prompt("Type \"0\" for command line or \"1\" for GUI gameplay: ");
 		if(gamePlay.contentEquals("0"))
 		{
-			BattleController battleController = new BattleController();
+			BattleController battleController = new BattleController(neat_count, opponent_count, human_count, 
+					neat_names, opponent_names, human_names, fight_amount, neat_types, opponent_types, human_types);
 			battleController.play();
-		}
-		else if(gamePlay.contentEquals("1"))
-		{
-			//Probably create some UI game controller. 
-			//Launch main menu window
-			try{
-				launch(args);
-				Utility.isGUI = true;
-			}catch(Exception e) {
-				System.out.println("ERROR " + e.toString());
-			}
 			
 		}
 	}

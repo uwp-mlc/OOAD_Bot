@@ -62,7 +62,7 @@ public class JarvisPlayer  extends Player {
 	 * Return the best skill after trying them all. 
 	 * @return
 	 */
-	private Skills learnSkill()
+	public Skills learnSkill()
 	{
 		Map<Skills, Double> outputDamageMap;
 		Map<Skills, Double> inputDamageMap;
