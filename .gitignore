@@ -1,6 +1,6 @@
 .metadata
-bin/
-tmp/
+FurbiesFighters/bin/
+FurbiesFighters/tmp/
 *.tmp
 *.bak
 *.swp
