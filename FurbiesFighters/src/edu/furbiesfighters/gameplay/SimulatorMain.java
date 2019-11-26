@@ -1,15 +1,18 @@
 package edu.furbiesfighters.gameplay;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+
 import jneat.*;
 import java.util.List;
+import java.util.Vector;
+
 import edu.furbiesfighters.gameplay.*;
 
 public class SimulatorMain {
 	public static void main(String[] args) {
 		List<String> opponent_names = new ArrayList<String>();
 		opponent_names.add("Nick");
-		opponent_names.add("Greg");
 		List<String> neat_names = new ArrayList<String>();
 		neat_names.add("Garrett");
 		List<String> human_names = new ArrayList<String>();
@@ -18,15 +21,53 @@ public class SimulatorMain {
 		neat_types.add(1);
 		List<Integer> opponent_types = new ArrayList<Integer>();
 		opponent_types.add(0);
-		opponent_types.add(1);
 		List<Integer> human_types = new ArrayList<Integer>();
 		
 		int fight_amount = 1;
+		int oppenentCount = opponent_names.size();
+		int neatCount = neat_names.size();
+		int humanCount = human_names.size();
 		
-		Population neatPop = new Population(30 /* population size */, 9 /* network inputs */ , 2 /* network outputs */, 5 /* max index of nodes */, true /* recurrent */, 0.5 /* probability of connecting two nodes */ );
+		int popSize = 30;
+		
+		// 3 opponent type
+		// 3 its type
+		// 5 cooldowns
+		// 5 opp cooldown
+		// 5 last attack
+		// 5 opp last attack
+		// 1 health
+		// 1 opp health
+		int inputSize = 28;
+		
+		// All skills plus 4 for shoot the moon
+		int outputSize = 9; 
+		
+		int maxNodes = 5;
+		boolean recurrent = true;
+		float prob = (float) 0.5;
+		
+		Population neatPop = new Population(popSize, inputSize, outputSize, maxNodes, recurrent, prob);
 		
 		
-		Game game = new Game(1,2,0,neat_names,opponent_names,human_names,fight_amount,neat_types,opponent_types,human_types);
-		game.play();
+		Vector neatOrgs = neatPop.getOrganisms();
+		int generation = 0;
+		int maxGenerations = 100;
+		
+		while(generation < maxGenerations) {
+			Iterator iterOrgs = neatOrgs.iterator();
+			while(iterOrgs.hasNext()) {
+				Organism _org = (Organism) iterOrgs.next();
+				GameSettings gs = new GameSettings(neatCount,
+						oppenentCount,humanCount,
+						neat_names,opponent_names,human_names,
+						fight_amount,neat_types,opponent_types,human_types,_org);
+				Game game = new Game(gs);
+			}
+			
+			neatPop.epoch(generation++);
+		}
+		
+		
 	}
 }

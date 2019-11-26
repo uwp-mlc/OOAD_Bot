@@ -33,6 +33,11 @@ public class BattleController
 	List<Integer> opponent_types;
 	List<Integer> human_types;
 	
+	public BattleController(GameSettings gs) {
+		this.currentBattle = new Battle(gs);
+		this.play(gs);
+	}
+	
 	/**
 	 * Constructor for Battle. It instantiates the currentBattle and input.
 	 */
@@ -56,6 +61,43 @@ public class BattleController
 		//this.currentBattle = new Battle();
 	}
 	
+	/**
+	 * Method for playing each battle. It will loop and let the player
+	 * play as many battles as they would like. It will announce each
+	 * battle and announce the end of the game.
+	 */
+	public void play(GameSettings gs)
+	{
+		boolean keepPlaying;
+		
+		keepPlaying = true;
+		
+		while (keepPlaying)
+		{
+			Utility.printLargeBanner("New Battle Beginning");
+			
+			this.ref = new Referee();
+			
+			currentBattle.setUpBattle();
+			currentBattle.playBattle();
+			
+			String winningString = "The following player(s) won the battle: ";
+			
+			List<Playable> winners = currentBattle.getBattleWinner();
+			for(Playable p : winners)
+				winningString += p.getPlayerName() + ", ";
+			
+			Utility.printEndline();
+			Utility.printMessage(winningString.substring(0, winningString.length()-2));
+			this.currentBattle.announceFightWinCount();
+			
+			keepPlaying = false; //keepPlaying();
+			break;
+		}
+		
+		Utility.printLargeBanner("Game Ending, Thank you for playing");
+	}
+	
 	
 	/**
 	 * Method for playing each battle. It will loop and let the player
@@ -66,7 +108,7 @@ public class BattleController
 	{
 		boolean keepPlaying;
 		
-		keepPlaying = true;
+		keepPlaying = false;//true;
 		
 		while (keepPlaying)
 		{
@@ -87,7 +129,7 @@ public class BattleController
 			Utility.printMessage(winningString.substring(0, winningString.length()-2));
 			this.currentBattle.announceFightWinCount();
 			
-			keepPlaying = keepPlaying();
+			keepPlaying = false;//keepPlaying();
 		}
 		
 		Utility.printLargeBanner("Game Ending, Thank you for playing");

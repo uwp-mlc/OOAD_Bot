@@ -50,6 +50,8 @@ public class Battle extends Observable
 	List<Integer> opponent_types;
 	List<Integer> human_types;
 	
+	GameSettings gs;
+	
 	/**
 	 * Instantiates the Battle class. It will instantiate the variables.
 	 */
@@ -84,6 +86,23 @@ public class Battle extends Observable
 		this.human_types = human_types;
 		this.opponent_types = opponent_types;
 		this.neat_types = neat_types;
+		
+		fightList = new ArrayList<Fight>();
+		this.ref = new Referee();
+	}
+	
+	public Battle(GameSettings gs) {
+		this.gs = gs;
+		this.neat_count = gs.neat_count;
+		this.opponent_count = gs.opponent_count;
+		this.human_count = gs.human_count;
+		this.neat_names = gs.neat_names;
+		this.opponent_names = gs.opponent_names;
+		this.human_names = gs.human_names;
+		this.fightAmount = gs.fight_amount;
+		this.human_types = gs.human_types;
+		this.opponent_types = gs.opponent_types;
+		this.neat_types = gs.neat_types;
 		
 		fightList = new ArrayList<Fight>();
 		this.ref = new Referee();
@@ -251,7 +270,7 @@ public class Battle extends Observable
 			
 			Utility.printEndline();
 			
-			player = new AverageJoe(playerHealth, playerName, petName, playerType);
+			player = new AverageJoe(playerHealth, playerName, petName, playerType,gs);
 			
 			this.ref.addPlayer(player);
 		}

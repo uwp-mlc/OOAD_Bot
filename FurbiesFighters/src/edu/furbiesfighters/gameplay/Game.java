@@ -51,6 +51,10 @@ public class Game extends Application
 	List<Integer> opponent_types;
 	List<Integer> human_types;
 	
+	public Game(GameSettings gs) {
+		this.play(gs);
+	}
+	
 	public Game(int neat_count, int opponent_count, int human_count, List<String> neat_names, 
 			List<String> opponent_names, List<String> human_names, int fight_amount, List<Integer> neat_types,
 			List<Integer> opponent_types, List<Integer> human_types) {
@@ -70,7 +74,25 @@ public class Game extends Application
 	 * Main point of entry for the system. Plays the game.
 	 * @param args
 	 */
-	public void play() 
+	public void play(GameSettings gs)
+	{
+		//Population neatPop = new Population(30 /* population size */, 9 /* network inputs */ , 2 /* network outputs */, 5 /* max index of nodes */, true /* recurrent */, 0.5 /* probability of connecting two nodes */ );
+		
+		Utility.isGUI = false;
+		String gamePlay = "0"; // Utility.prompt("Type \"0\" for command line or \"1\" for GUI gameplay: ");
+		if(gamePlay.contentEquals("0"))
+		{
+			BattleController battleController = new BattleController(gs);
+			//battleController.play(gs);
+			
+		}
+	}
+	
+	/**
+	 * Main point of entry for the system. Plays the game.
+	 * @param args
+	 */
+	public void play()
 	{
 		//Population neatPop = new Population(30 /* population size */, 9 /* network inputs */ , 2 /* network outputs */, 5 /* max index of nodes */, true /* recurrent */, 0.5 /* probability of connecting two nodes */ );
 		
