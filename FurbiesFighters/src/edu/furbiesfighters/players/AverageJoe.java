@@ -25,7 +25,7 @@ public class AverageJoe extends JarvisPlayer {
 	
 	@Override
 	public Skills chooseSkill() {
-		Utility.printMessage("Average Joe is choosing their skill");
+		Utility.printMessage("Average Joe is choosing their skill " + super.opponentType);
 		return super.learnSkill();
 	}
 	

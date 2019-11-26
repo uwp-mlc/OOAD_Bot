@@ -25,7 +25,7 @@ public class JarvisPlayer  extends Player {
 	protected Map<Skills, Integer> rechargingOpponentSkills, jarvisRechargingSkills;
 	private int roundNumber, fightNumber, opponentIndex, jarvisIndex;
 	private String opponentName;
-	private PetTypes opponentType;
+	protected PetTypes opponentType;
 	private Map<Integer, Double> randomDifference;
 	private double opponentHealth;
 	private Random random;
@@ -35,7 +35,7 @@ public class JarvisPlayer  extends Player {
 	
 	
 	public JarvisPlayer(double initialHP, String name, String petName, PetTypes petType) {
-		super(initialHP, name, petName, PetTypes.POWER, PlayerTypes.JARVIS);
+		super(initialHP, name, petName, petType, PlayerTypes.JARVIS); //PetTypes.POWER
 		this.randomDifference = new HashMap<Integer, Double>();
 		this.rechargingOpponentSkills = new HashMap<Skills, Integer>();
 		this.rechargingOpponentSkills.put(Skills.ROCK_THROW, 0);
@@ -54,7 +54,7 @@ public class JarvisPlayer  extends Player {
 	@Override
 	public Skills chooseSkill()
 	{
-		Utility.printMessage("Jarvis is choosing their skill");
+		Utility.printMessage("Jarvis is choosing their skill against " + this.opponentType);
 		return learnSkill();
 	}
 

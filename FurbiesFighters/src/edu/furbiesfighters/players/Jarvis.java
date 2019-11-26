@@ -48,7 +48,7 @@ public class Jarvis  extends Player { //extends Pet for doug
 	@Override
 	public Skills chooseSkill()
 	{
-		System.out.println("Jarvis is choosing.....");
+		System.out.println("SFIONDSJFKLFJarvis is choosing..... against " + this.opponentType);
 		return learnSkill();
 	}
 

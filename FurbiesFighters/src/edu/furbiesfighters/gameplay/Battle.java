@@ -99,8 +99,8 @@ public class Battle extends Observable
 		Utility.printEndline();
 
 		this.getAllNeatAIPlayerInformation();
-		getAllSmartAIPlayerInformation();
-		getAllHumanPlayerInformation();
+		this.getAllSmartAIPlayerInformation();
+		this.getAllHumanPlayerInformation();
 		setFights();
 		
 		announceBattleInformation();
@@ -210,11 +210,13 @@ public class Battle extends Observable
 		int playerHealth;
 		Playable player;
 		
+		PetTypes[] petVals = PetTypes.values();
 		for (int i = 0; i < this.opponent_count; i++)
 		{
 			playerName = "Jarvis " + (i + 1);
 			Utility.printMessage(playerName + ":");
-			playerType = PetTypes.values()[this.opponent_types.get(i)];
+			int typeInt = this.opponent_types.get(i);
+			playerType = petVals[typeInt];
 			playerHealth = 100;
 			petName = this.opponent_names.get(i);
 			

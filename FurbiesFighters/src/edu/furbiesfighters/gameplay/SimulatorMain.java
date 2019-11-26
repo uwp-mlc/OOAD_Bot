@@ -8,6 +8,7 @@ public class SimulatorMain {
 	public static void main(String[] args) {
 		List<String> opponent_names = new ArrayList<String>();
 		opponent_names.add("Nick");
+		opponent_names.add("Greg");
 		List<String> neat_names = new ArrayList<String>();
 		neat_names.add("Garrett");
 		List<String> human_names = new ArrayList<String>();
@@ -15,12 +16,13 @@ public class SimulatorMain {
 		List<Integer> neat_types = new ArrayList<Integer>();
 		neat_types.add(1);
 		List<Integer> opponent_types = new ArrayList<Integer>();
-		opponent_types.add(2);
+		opponent_types.add(0);
+		opponent_types.add(1);
 		List<Integer> human_types = new ArrayList<Integer>();
 		
-		int fight_amount = 1000;
+		int fight_amount = 1;
 		
-		Game game = new Game(1,1,0,neat_names,opponent_names,human_names,fight_amount,neat_types,opponent_types,human_types);
+		Game game = new Game(1,2,0,neat_names,opponent_names,human_names,fight_amount,neat_types,opponent_types,human_types);
 		game.play();
 	}
 }
