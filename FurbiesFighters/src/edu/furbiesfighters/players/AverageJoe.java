@@ -37,12 +37,12 @@ public class AverageJoe extends JarvisPlayer {
 		Utility.printMessage("Average Joe is choosing their skill ");
 		List<Float> input = new ArrayList<Float>();
 		
-		input.addAll(Helpers.generateOneHot(super.opponentType, PetTypes.values().length));
-		input.addAll(Helpers.generateOneHot(super.getPlayerType(), PetTypes.values().length));
+		input.addAll(Helpers.generateOneHot(super.opponentType));
+		input.addAll(Helpers.generateOneHot(super.getPlayerType()));
 		input.addAll(Helpers.boundedRechargeTime(super.jarvisRechargingSkills));
 		input.addAll(Helpers.boundedRechargeTime(super.rechargingOpponentSkills));
-		input.addAll(Helpers.generateOneHot(super.lastAttackSkill, Skills.values().length));
-		input.addAll(Helpers.generateOneHot(super.lastOpponentAttackSkill, Skills.values().length));
+		input.addAll(Helpers.generateOneHot(super.lastAttackSkill));
+		input.addAll(Helpers.generateOneHot(super.lastOpponentAttackSkill));
 		input.add((float)super.getCurrentHp() / (float)super.getPlayerFullHP());
 		input.add((float)super.opponentHealth / (float)super.getPlayerFullHP());
 		
