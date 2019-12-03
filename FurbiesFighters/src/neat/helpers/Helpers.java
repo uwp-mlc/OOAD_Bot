@@ -1,5 +1,6 @@
 package neat.helpers;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,7 @@ public class Helpers {
 				i++;
 			}
 		}
-		
+			
 		return oneHot;
 	}
 	
