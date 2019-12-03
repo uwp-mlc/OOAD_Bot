@@ -27,23 +27,33 @@ public class JarvisPlayer  extends Player {
 	private String opponentName;
 	protected PetTypes opponentType;
 	private Map<Integer, Double> randomDifference;
-	private double opponentHealth;
+	protected double opponentHealth;
 	private Random random;
 	private int roundsSinceUse;
 	private double maxROFDiff;
 	private Skills predictedSkill;//Override from the Player... We want to use this one. 
+	protected Skills lastAttackSkill, lastOpponentAttackSkill;
 	
 	
 	public JarvisPlayer(double initialHP, String name, String petName, PetTypes petType) {
 		super(initialHP, name, petName, petType, PlayerTypes.JARVIS); //PetTypes.POWER
 		this.randomDifference = new HashMap<Integer, Double>();
+		
 		this.rechargingOpponentSkills = new HashMap<Skills, Integer>();
 		this.rechargingOpponentSkills.put(Skills.ROCK_THROW, 0);
 		this.rechargingOpponentSkills.put(Skills.SCISSOR_POKE, 0);
 		this.rechargingOpponentSkills.put(Skills.PAPER_CUT, 0);
 		this.rechargingOpponentSkills.put(Skills.SHOOT_THE_MOON, 0);
 		this.rechargingOpponentSkills.put(Skills.REVERSAL_OF_FORTUNE, 0);
-		this.random  = new Random(10320l);
+		
+		this.jarvisRechargingSkills = new HashMap<Skills, Integer>();
+		this.jarvisRechargingSkills.put(Skills.ROCK_THROW, 0);
+		this.jarvisRechargingSkills.put(Skills.SCISSOR_POKE, 0);
+		this.jarvisRechargingSkills.put(Skills.PAPER_CUT, 0);
+		this.jarvisRechargingSkills.put(Skills.SHOOT_THE_MOON, 0);
+		this.jarvisRechargingSkills.put(Skills.REVERSAL_OF_FORTUNE, 0);
+		
+		this.random  = new Random(); //10320l
 		roundsSinceUse = 0;
 		maxROFDiff = (-1) * Double.MAX_VALUE;
 	}
@@ -349,6 +359,8 @@ public class JarvisPlayer  extends Player {
 			this.randomDifference.put(event.getAttackingPlayerIndex(), this.randomDifference.get(event.getAttackingPlayerIndex()) - event.getRandomDamage());
 			this.randomDifference.put(event.getVictimPlayerIndex(), this.randomDifference.get(event.getVictimPlayerIndex()) + event.getRandomDamage());
 			this.roundsSinceUse++;
+			
+			this.lastOpponentAttackSkill = event.getAttackingSkillChoice();
 		}
 		else if(event.getAttackingPlayerIndex() == jarvisIndex)
 		{
@@ -358,6 +370,7 @@ public class JarvisPlayer  extends Player {
 			this.randomDifference.put(event.getVictimPlayerIndex(), this.randomDifference.get(event.getVictimPlayerIndex()) + event.getRandomDamage());
 		
 			Skills s = event.getAttackingSkillChoice();
+			this.lastAttackSkill = event.getAttackingSkillChoice();
 		}
 	}
 	
