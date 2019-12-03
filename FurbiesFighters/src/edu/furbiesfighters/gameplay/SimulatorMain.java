@@ -63,6 +63,7 @@ public class SimulatorMain {
 						neat_names,opponent_names,human_names,
 						fight_amount,neat_types,opponent_types,human_types,_org);
 				Game game = new Game(gs);
+				//_org.setFitness(game.);
 			}
 			
 			neatPop.epoch(generation++);

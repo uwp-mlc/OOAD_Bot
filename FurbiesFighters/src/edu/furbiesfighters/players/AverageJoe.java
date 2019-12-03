@@ -16,6 +16,8 @@ import edu.furbiesfighters.events.RoundStartEvent;
 import edu.furbiesfighters.gameplay.GameSettings;
 import edu.furbiesfighters.skills.Skills;
 import edu.furbiesfighters.utility.Utility;
+import jneat.NNode;
+import jneat.Network;
 
 /**
  * @author Machine Learning Club
@@ -35,7 +37,7 @@ public class AverageJoe extends JarvisPlayer {
 	@Override
 	public Skills chooseSkill() {
 		Utility.printMessage("Average Joe is choosing their skill ");
-		List<Float> input = new ArrayList<Float>();
+		List<Double> input = new ArrayList<Double>();
 		
 		input.addAll(Helpers.generateOneHot(super.opponentType, PetTypes.values().length));
 		input.addAll(Helpers.generateOneHot(super.getPlayerType(), PetTypes.values().length));
@@ -43,11 +45,40 @@ public class AverageJoe extends JarvisPlayer {
 		input.addAll(Helpers.boundedRechargeTime(super.rechargingOpponentSkills));
 		input.addAll(Helpers.generateOneHot(super.lastAttackSkill, Skills.values().length));
 		input.addAll(Helpers.generateOneHot(super.lastOpponentAttackSkill, Skills.values().length));
-		input.add((float)super.getCurrentHp() / (float)super.getPlayerFullHP());
-		input.add((float)super.opponentHealth / (float)super.getPlayerFullHP());
+		input.add((double)super.getCurrentHp() / (double)super.getPlayerFullHP());
+		input.add((double)super.opponentHealth / (double)super.getPlayerFullHP());
 		
 		System.out.println("Input array: " + input);
 		
+		
+		this.getOuput(input);
+		
 		return super.learnSkill();
+	}
+	
+	private List<Double> getOuput(List<Double> input) {
+		Network brain = this.gs.organism.getNet();
+		
+		input.add(-1.0); // Add bias to the input
+		
+		double[] arrInputs = input.stream().mapToDouble(d -> d).toArray();
+		
+		brain.load_sensors(arrInputs);
+		
+		int maxNetDepth = brain.max_depth();
+		
+		for(int relax = 0; relax <= maxNetDepth; relax++) {
+			brain.activate();
+		}
+		
+		List<Double> outputs = new ArrayList<Double>();
+
+		for(Object n : brain.getOutputs()) {
+			NNode node = (NNode) n;
+			outputs.add(node.getActivation());
+		}
+		
+		System.out.println(outputs);
+		return outputs;
 	}
 }
