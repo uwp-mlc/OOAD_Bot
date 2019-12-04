@@ -25,6 +25,10 @@ import jneat.Network;
  */
 public class AverageJoe extends JarvisPlayer {
 	private GameSettings gs;
+	private final Skills[] outputOrder = {Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, Skills.ROCK_THROW,
+            Skills.SCISSOR_POKE, Skills.SHOOT_THE_MOON,Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, 
+            Skills.ROCK_THROW, Skills.SCISSOR_POKE};
+	
 	public AverageJoe(double initialHP, String name, String petName, PetTypes petType) {
 		super(initialHP, name, petName, PetTypes.POWER);
 	}
@@ -48,8 +52,7 @@ public class AverageJoe extends JarvisPlayer {
 		input.add((double)super.getCurrentHp() / (double)super.getPlayerFullHP());
 		input.add((double)super.opponentHealth / (double)super.getPlayerFullHP());
 		
-		System.out.println("Input array: " + input);
-		
+		//System.out.println("Input array: " + input.size());
 		
 		this.getOuput(input);
 		
@@ -78,7 +81,9 @@ public class AverageJoe extends JarvisPlayer {
 			outputs.add(node.getActivation());
 		}
 		
-		System.out.println(outputs);
+		//System.out.println(outputs);
 		return outputs;
 	}
+	
+	//private
 }

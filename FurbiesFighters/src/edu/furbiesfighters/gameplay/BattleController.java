@@ -33,8 +33,11 @@ public class BattleController
 	List<Integer> opponent_types;
 	List<Integer> human_types;
 	
+	GameSettings gs;
+	
 	public BattleController(GameSettings gs) {
 		this.currentBattle = new Battle(gs);
+		this.gs = gs;
 		this.play(gs);
 	}
 	
@@ -87,6 +90,12 @@ public class BattleController
 			for(Playable p : winners)
 				winningString += p.getPlayerName() + ", ";
 			
+			Playable aiPlayer = this.getAiFromName(this.currentBattle.ref.getAllPlayables(), this.gs.ai_name);
+			Playable opponentPlayer = this.getOpponent(this.currentBattle.ref.getAllPlayables(), this.gs.ai_name);
+			
+			double fitness = aiPlayer.getCurrentHp() - opponentPlayer.getCurrentHp();
+			this.gs.setFitness(fitness);
+			
 			Utility.printEndline();
 			Utility.printMessage(winningString.substring(0, winningString.length()-2));
 			this.currentBattle.announceFightWinCount();
@@ -98,6 +107,25 @@ public class BattleController
 		Utility.printLargeBanner("Game Ending, Thank you for playing");
 	}
 	
+	public Playable getAiFromName(List<Playable> players, String name) {
+		for(Playable p : players) {
+			if(p.getPetName().equals(name)) {
+				return p;
+			}
+		}
+		System.out.println("Bad error here.. AI not found (Stack trace to BattleController)");
+		return null;
+	}
+	
+	public Playable getOpponent(List<Playable> players, String name) {
+		for(Playable p : players) {
+			if(! p.getPetName().equals(name)) {
+				return p;
+			}
+		}
+		System.out.println("Bad error here.. Opponent not found (Stack trace to BattleController)");
+		return null;
+	}
 	
 	/**
 	 * Method for playing each battle. It will loop and let the player
@@ -122,8 +150,9 @@ public class BattleController
 			String winningString = "The following player(s) won the battle: ";
 			
 			List<Playable> winners = currentBattle.getBattleWinner();
-			for(Playable p : winners)
+			for(Playable p : winners) {
 				winningString += p.getPlayerName() + ", ";
+			}
 			
 			Utility.printEndline();
 			Utility.printMessage(winningString.substring(0, winningString.length()-2));

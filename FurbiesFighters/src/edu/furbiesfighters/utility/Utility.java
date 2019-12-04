@@ -13,7 +13,9 @@ public class Utility
 {
 	private static final String BANNER_BORDER = "|------------------------------------------------|";
 	
-	public static boolean isGUI = false;
+	public static boolean isGUI = false;//false
+	
+	public static boolean verbose = false;
 	
 	private static GamePlayPresenter presenter = null;
 	
@@ -28,21 +30,23 @@ public class Utility
 	 */
 	public static void printLargeBanner(String message)
 	{
-		String convertedMessage;
-		
-		convertedMessage = convertStringToBanner(message);
-		if(Utility.isGUI && presenter != null)
-		{
-			//Utility.gp.getTxtOutput().setText("add to the text");
-			Utility.presenter.setConsoleText(convertedMessage + "\n");
-		}
-		else 
-		{
-			System.out.println();
-			System.out.println(BANNER_BORDER);
-			System.out.println(convertedMessage);
-			System.out.println(BANNER_BORDER);
-			System.out.println();
+		if(verbose) {
+			String convertedMessage;
+			
+			convertedMessage = convertStringToBanner(message);
+			if(Utility.isGUI && presenter != null)
+			{
+				//Utility.gp.getTxtOutput().setText("add to the text");
+				Utility.presenter.setConsoleText(convertedMessage + "\n");
+			}
+			else 
+			{
+				System.out.println();
+				System.out.println(BANNER_BORDER);
+				System.out.println(convertedMessage);
+				System.out.println(BANNER_BORDER);
+				System.out.println();
+			}
 		}
 	}
 	
@@ -53,20 +57,22 @@ public class Utility
 	 */
 	public static void printSmallBanner(String message)
 	{
-		String convertedMessage;
+		if(verbose) {
+			String convertedMessage;
 		
-		convertedMessage = convertStringToBanner(message);
-		
-		if(Utility.isGUI && presenter != null)
-		{
-			//Utility.gp.getTxtOutput().setText("add to the text");
-			Utility.presenter.setConsoleText(convertedMessage + "\n");
-		}
-		else 
-		{
-			System.out.println();
-			System.out.println(convertedMessage);
-			System.out.println();
+			convertedMessage = convertStringToBanner(message);
+			
+			if(Utility.isGUI && presenter != null)
+			{
+				//Utility.gp.getTxtOutput().setText("add to the text");
+				Utility.presenter.setConsoleText(convertedMessage + "\n");
+			}
+			else 
+			{
+				System.out.println();
+				System.out.println(convertedMessage);
+				System.out.println();
+			}
 		}
 	}
 	
@@ -75,14 +81,16 @@ public class Utility
 	 */
 	public static void printEndline()
 	{
-		if(Utility.isGUI && presenter != null)
-		{
-			//Utility.gp.getTxtOutput().setText("add to the text");
-			Utility.presenter.setConsoleText("\n");
-		}
-		else 
-		{
-			System.out.println();
+		if(verbose) {
+			if(Utility.isGUI && presenter != null)
+			{
+				//Utility.gp.getTxtOutput().setText("add to the text");
+				Utility.presenter.setConsoleText("\n");
+			}
+			else 
+			{
+				System.out.println();
+			}
 		}
 	}
 	
@@ -92,14 +100,16 @@ public class Utility
 	 */
 	public static void printMessage(String message)
 	{
-		if(Utility.isGUI && presenter != null)
-		{
-			//Utility.gp.getTxtOutput().setText("add to the text");
-			Utility.presenter.setConsoleText(message + "\n");
-		}
-		else 
-		{
-			System.out.println(message);
+		if(verbose) {
+			if(Utility.isGUI && presenter != null)
+			{
+				//Utility.gp.getTxtOutput().setText("add to the text");
+				Utility.presenter.setConsoleText(message + "\n");
+			}
+			else 
+			{
+				System.out.println(message);
+			}
 		}
 	}
 	
@@ -111,13 +121,16 @@ public class Utility
 	 */
 	public static String prompt(String promptMessage)
 	{
-		String answer;
-		
-		System.out.print(promptMessage + " ");
-		
-		answer = stdin.nextLine();
-		
-		return answer;
+		if(verbose) {
+			String answer;
+			
+			System.out.print(promptMessage + " ");
+			
+			answer = stdin.nextLine();
+			
+			return answer;
+		}
+		return "";
 	}
 	
 	/**

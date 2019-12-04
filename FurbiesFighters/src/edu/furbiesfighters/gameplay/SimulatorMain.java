@@ -11,6 +11,8 @@ import edu.furbiesfighters.gameplay.*;
 
 public class SimulatorMain {
 	public static void main(String[] args) {
+		String ai_name = "Garrett";
+		
 		List<String> opponent_names = new ArrayList<String>();
 		opponent_names.add("Nick");
 		List<String> neat_names = new ArrayList<String>();
@@ -28,7 +30,7 @@ public class SimulatorMain {
 		int neatCount = neat_names.size();
 		int humanCount = human_names.size();
 		
-		int popSize = 30;
+		int popSize = 5;
 		
 		// 3 opponent type
 		// 3 its type
@@ -61,12 +63,16 @@ public class SimulatorMain {
 				GameSettings gs = new GameSettings(neatCount,
 						oppenentCount,humanCount,
 						neat_names,opponent_names,human_names,
-						fight_amount,neat_types,opponent_types,human_types,_org);
+						fight_amount,neat_types,opponent_types,human_types,_org, ai_name);
+				
 				Game game = new Game(gs);
-				//_org.setFitness(game.);
+				
+				_org.setFitness(gs.getFitness());
 			}
 			
 			neatPop.epoch(generation++);
+			
+			System.out.println("High Fitness: " + neatPop.getHighest_fitness());
 		}
 		
 		
