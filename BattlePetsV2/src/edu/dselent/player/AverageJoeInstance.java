@@ -11,9 +11,12 @@ import java.util.Random;
 
 import edu.dselent.settings.PlayerInfo;
 import edu.dselent.skill.Skills;
+import jNeatCommon.IOseq;
+import jneat.Genome;
 import jneat.NNode;
 import jneat.Network;
 import jneat.Organism;
+import jneat.Population;
 
 /**
  * @author Machine Learning Club
@@ -28,6 +31,9 @@ public class AverageJoeInstance extends JarvisPlayer {
 	public AverageJoeInstance(int playableUid, PlayerInfo playerInfo, Organism org) {
 		super(playableUid, playerInfo);
 		this.org = org;
+		
+		//IOseq io = new IOseq("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2");
+		Population p = new Population("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2");
 	}
 	
 	@Override

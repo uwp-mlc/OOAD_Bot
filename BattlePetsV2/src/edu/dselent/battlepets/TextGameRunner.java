@@ -30,7 +30,7 @@ import jneat.Population;
 public class TextGameRunner implements GameRunner
 {
 	private Population createPopulation() {
-		int popSize = 5;
+		int popSize = 10;
 		
 		// 3 opponent type
 		// 3 its type
@@ -103,7 +103,6 @@ public class TextGameRunner implements GameRunner
 		
 		Population neatPop = this.createPopulation();
 		
-
 		Vector neatOrgs = neatPop.getOrganisms();
 		int generation = 0;
 		int maxGenerations = 100;
@@ -132,6 +131,7 @@ public class TextGameRunner implements GameRunner
 			neatPop.epoch(++generation);
 			
 			System.out.println("\nHigh Fitness: " + neatPop.getHighest_fitness());
+			neatPop.print_to_file_by_species("SavedPopulation.txt");
 		}
 		
 		System.out.println("\n" + fitnesses.toString());
