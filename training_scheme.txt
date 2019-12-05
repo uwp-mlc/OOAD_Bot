@@ -1,0 +1,3 @@
+save species leaders until each species has x amount
+replace old leaders with new
+fitness = avg game(all leaders)

@@ -26,11 +26,13 @@ import edu.dselent.settings.PlayerInfo.PlayerInfoBuilder;
 import edu.dselent.skill.Skills;
 import jneat.Organism;
 import jneat.Population;
+import jneat.Species;
+import jneat.Neat;
 
 public class TextGameRunner implements GameRunner
 {
 	private Population createPopulation() {
-		int popSize = 10;
+		int popSize = 100;
 		
 		// 3 opponent type
 		// 3 its type
@@ -82,6 +84,7 @@ public class TextGameRunner implements GameRunner
 	@Override
 	public void runGame()
 	{
+		Neat.initbase();
 		Inputtable textInputtable = new TextInputGetter();
 		Outputtable textOutputtable = new TextOutputSender();
 		IoManager textIoManager = new IoManager(textInputtable, textOutputtable);
@@ -97,12 +100,11 @@ public class TextGameRunner implements GameRunner
 		Random r = new Random();
 		
 		int numPlayers = 2;
-		int fightCount = 10;
+		int fightCount = 1;
 		
 		
 		
 		Population neatPop = this.createPopulation();
-		
 		Vector neatOrgs = neatPop.getOrganisms();
 		int generation = 0;
 		int maxGenerations = 100;
@@ -127,9 +129,13 @@ public class TextGameRunner implements GameRunner
 				//System.out.println("Org Fitness: " + gs.getFitness());
 			}
 
-			neatPop.viewtext();
+			//neatPop.viewtext();
 			neatPop.epoch(++generation);
-			
+			for(Object o : neatPop.getSpecies()) {
+				Species s = (Species)o;
+				s.compute_average_fitness();
+				s.compute_max_fitness();
+			}
 			System.out.println("\nHigh Fitness: " + neatPop.getHighest_fitness());
 			neatPop.print_to_file_by_species("SavedPopulation.txt");
 		}
