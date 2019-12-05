@@ -50,13 +50,13 @@ public class AverageJoeInstance extends JarvisPlayer {
 		
 		//System.out.println("Input array: " + input.size());
 		
-		//return this.getOuputChoice(input);
+		return this.getOuputChoice(input);
 		
-		return super.learnSkill();
+		//return super.learnSkill();
 	}
 	
 	private Skills getOuputChoice(List<Double> input) {
-		Network brain = this.gs.organism.getNet();
+		Network brain = this.org.getNet();
 		
 		input.add(-1.0); // Add bias to the input
 		

@@ -2,8 +2,10 @@ package edu.dselent.battlepets;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Vector;
 
 import edu.dselent.config.ApplicationConfigurations;
 import edu.dselent.control.TextBattleControl;
@@ -27,47 +29,7 @@ import jneat.Population;
 
 public class TextGameRunner implements GameRunner
 {
-	@Override
-	public void runGame()
-	{
-		Inputtable textInputtable = new TextInputGetter();
-		Outputtable textOutputtable = new TextOutputSender();
-		IoManager textIoManager = new IoManager(textInputtable, textOutputtable);
-
-		ApplicationConfigurations.INSTANCE.setIoManager(textIoManager);
-		
-		GameSettingsControl gameSettingsControl = new GameSettingsControl();
-		//GameSettings gameSettings = gameSettingsControl.retrieveGameSettings();
-	
-		//PlayerSettingsControl playerSettingsControl = new PlayerSettingsControl(gameSettings);
-		//List<PlayerInfo> playerInfoList = playerSettingsControl.retrievePlayerInfoList();
-		
-		// MLC ADDITION
-		Random r = new Random();
-		GameSettings gameSettings = new GameSettings(r.nextInt(10000), 2, 10);
-		
-		List<PlayerInfo> playerInfoList = new ArrayList<>();
-		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
-		
-		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.JARVIS)
-				.withPetType(PetTypes.POWER)
-				.withPlayerName("Nick")
-				.withPetName("Nick Pet")
-				.withStartingHp(100.0)
-				.withSkillSet(EnumSet.allOf(Skills.class))
-				.build();
-		
-		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
-				.withPetType(PetTypes.POWER)
-				.withPlayerName("Garrett")
-				.withPetName("Garrett Pet")
-				.withStartingHp(100.0)
-				.withSkillSet(EnumSet.allOf(Skills.class))
-				.build();
-		
-		playerInfoList.add(playerInfo);
-		playerInfoList.add(playerInfo2);
-		
+	private Population createPopulation() {
 		int popSize = 5;
 		
 		// 3 opponent type
@@ -87,16 +49,92 @@ public class TextGameRunner implements GameRunner
 		boolean recurrent = true;
 		float prob = (float) 0.5;
 		
-		Population neatPop = new Population(popSize, inputSize, outputSize, maxNodes, recurrent, prob);
+		return new Population(popSize, inputSize, outputSize, maxNodes, recurrent, prob);
+		
+	}
+	
+	private List<PlayerInfo> createPlayerInfoList(){
+		List<PlayerInfo> playerInfoList = new ArrayList<>();
+		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
+		
+		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Garrett")
+				.withPetName("Garrett Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.JARVIS)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Nick")
+				.withPetName("Nick Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		playerInfoList.add(playerInfo);
+		playerInfoList.add(playerInfo2);
+		
+		return playerInfoList;
+	}
+	
+	@Override
+	public void runGame()
+	{
+		Inputtable textInputtable = new TextInputGetter();
+		Outputtable textOutputtable = new TextOutputSender();
+		IoManager textIoManager = new IoManager(textInputtable, textOutputtable);
+
+		ApplicationConfigurations.INSTANCE.setIoManager(textIoManager);
+		
+		GameSettingsControl gameSettingsControl = new GameSettingsControl();
+		//GameSettings gameSettings = gameSettingsControl.retrieveGameSettings();
+	
+		//PlayerSettingsControl playerSettingsControl = new PlayerSettingsControl(gameSettings);
+		//List<PlayerInfo> playerInfoList = playerSettingsControl.retrievePlayerInfoList();
+		
+		Random r = new Random();
+		
+		int numPlayers = 2;
+		int fightCount = 10;
 		
 		
-		// END MLC
+		
+		Population neatPop = this.createPopulation();
+		
 
+		Vector neatOrgs = neatPop.getOrganisms();
+		int generation = 0;
+		int maxGenerations = 100;
+		
+		List<Double> fitnesses = new ArrayList<Double>();
+		
+		while(generation < maxGenerations) {
+			Iterator iterOrgs = neatOrgs.iterator();
+			neatPop.setHighest_fitness(-100.00);
+			while(iterOrgs.hasNext()) {
+				Organism _org = (Organism) iterOrgs.next();
+				
+				GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
+				List<PlayerInfo> playerInfoList = this.createPlayerInfoList();
+				List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
+				TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
+				battleControl.runBattle();
+				
+				double healthDiff = playableList.get(0).getCurrentHp() - playableList.get(1).getCurrentHp();
+				_org.setFitness(healthDiff);
+				fitnesses.add(healthDiff);
+				//System.out.println("Org Fitness: " + gs.getFitness());
+			}
 
-		// TODO add tournament mode
-		List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, (Organism)neatPop.getOrganisms().get(0));
-		TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
-		battleControl.runBattle();
+			neatPop.viewtext();
+			neatPop.epoch(++generation);
+			
+			System.out.println("\nHigh Fitness: " + neatPop.getHighest_fitness());
+		}
+		
+		System.out.println("\n" + fitnesses.toString());
 	}
 	
 }
