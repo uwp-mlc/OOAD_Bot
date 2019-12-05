@@ -373,6 +373,7 @@ public class Battle extends Observable
 		for(String s : this.ref.getPlayableFightWinList())
 		{
 			Utility.printMessage(s);
+			//System.out.println(s);
 		}
 	}
 }

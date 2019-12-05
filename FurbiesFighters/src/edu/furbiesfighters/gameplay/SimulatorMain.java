@@ -25,7 +25,7 @@ public class SimulatorMain {
 		opponent_types.add(0);
 		List<Integer> human_types = new ArrayList<Integer>();
 		
-		int fight_amount = 1;
+		int fight_amount = 10;
 		int oppenentCount = opponent_names.size();
 		int neatCount = neat_names.size();
 		int humanCount = human_names.size();
@@ -51,13 +51,13 @@ public class SimulatorMain {
 		
 		Population neatPop = new Population(popSize, inputSize, outputSize, maxNodes, recurrent, prob);
 		
-		
 		Vector neatOrgs = neatPop.getOrganisms();
 		int generation = 0;
 		int maxGenerations = 100;
 		
 		while(generation < maxGenerations) {
 			Iterator iterOrgs = neatOrgs.iterator();
+			neatPop.setHighest_fitness(-100.00);
 			while(iterOrgs.hasNext()) {
 				Organism _org = (Organism) iterOrgs.next();
 				GameSettings gs = new GameSettings(neatCount,
@@ -68,11 +68,13 @@ public class SimulatorMain {
 				Game game = new Game(gs);
 				
 				_org.setFitness(gs.getFitness());
+				//System.out.println("Org Fitness: " + gs.getFitness());
 			}
+
+			neatPop.viewtext();
+			neatPop.epoch(++generation);
 			
-			neatPop.epoch(generation++);
-			
-			System.out.println("High Fitness: " + neatPop.getHighest_fitness());
+			System.out.println("\nHigh Fitness: " + neatPop.getHighest_fitness());
 		}
 		
 		

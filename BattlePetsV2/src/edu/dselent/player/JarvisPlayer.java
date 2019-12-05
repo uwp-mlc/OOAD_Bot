@@ -1,7 +1,4 @@
-/**
- * 
- */
-package edu.furbiesfighters.players;
+package edu.dselent.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,20 +7,23 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Random;
 
-import edu.furbiesfighters.events.AttackEvent;
-import edu.furbiesfighters.events.FightStartEvent;
-import edu.furbiesfighters.events.PlayerEventInfo;
-import edu.furbiesfighters.events.RoundStartEvent;
-import edu.furbiesfighters.skills.Skills;
-import edu.furbiesfighters.utility.Utility;
+import edu.dselent.damage.Damage;
+import edu.dselent.event.AttackEvent;
+import edu.dselent.event.FightStartEvent;
+import edu.dselent.event.PlayerEventInfo;
+import edu.dselent.event.RoundStartEvent;
+import edu.dselent.settings.PlayerInfo;
+import edu.dselent.skill.Skills;
+
+
 
 /**
  * @author Furbies Fighters
  *
  */
-public class JarvisPlayer  extends Player {
-	protected Map<Skills, Integer> rechargingOpponentSkills, jarvisRechargingSkills;
-	private int roundNumber, fightNumber, opponentIndex, jarvisIndex;
+public class JarvisPlayer extends PetInstance {
+	protected Map<Skills, Integer> rechargingOpponentSkills;//, jarvisRechargingSkills;
+	private int roundNumber, fightNumber, opponentIndex, jarvisIndex, opponentUID;
 	private String opponentName;
 	protected PetTypes opponentType;
 	private Map<Integer, Double> randomDifference;
@@ -34,24 +34,18 @@ public class JarvisPlayer  extends Player {
 	private Skills predictedSkill;//Override from the Player... We want to use this one. 
 	protected Skills lastAttackSkill, lastOpponentAttackSkill;
 	
-	
-	public JarvisPlayer(double initialHP, String name, String petName, PetTypes petType) {
-		super(initialHP, name, petName, petType, PlayerTypes.JARVIS); //PetTypes.POWER
+	public JarvisPlayer(int playableUid, PlayerInfo playerInfo) {
+		super(playableUid, playerInfo);
+		
 		this.randomDifference = new HashMap<Integer, Double>();
+		this.randomDifference.put(super.getPlayableUid(), 0.0);
 		
 		this.rechargingOpponentSkills = new HashMap<Skills, Integer>();
 		this.rechargingOpponentSkills.put(Skills.ROCK_THROW, 0);
-		this.rechargingOpponentSkills.put(Skills.SCISSOR_POKE, 0);
+		this.rechargingOpponentSkills.put(Skills.SCISSORS_POKE, 0);
 		this.rechargingOpponentSkills.put(Skills.PAPER_CUT, 0);
 		this.rechargingOpponentSkills.put(Skills.SHOOT_THE_MOON, 0);
 		this.rechargingOpponentSkills.put(Skills.REVERSAL_OF_FORTUNE, 0);
-		
-		this.jarvisRechargingSkills = new HashMap<Skills, Integer>();
-		this.jarvisRechargingSkills.put(Skills.ROCK_THROW, 0);
-		this.jarvisRechargingSkills.put(Skills.SCISSOR_POKE, 0);
-		this.jarvisRechargingSkills.put(Skills.PAPER_CUT, 0);
-		this.jarvisRechargingSkills.put(Skills.SHOOT_THE_MOON, 0);
-		this.jarvisRechargingSkills.put(Skills.REVERSAL_OF_FORTUNE, 0);
 		
 		this.random  = new Random(); //10320l
 		roundsSinceUse = 0;
@@ -64,7 +58,7 @@ public class JarvisPlayer  extends Player {
 	@Override
 	public Skills chooseSkill()
 	{
-		Utility.printMessage("Jarvis is choosing their skill against " + this.opponentType);
+		//Utility.printMessage("Jarvis is choosing their skill against " + this.opponentType);
 		return learnSkill();
 	}
 
@@ -96,7 +90,7 @@ public class JarvisPlayer  extends Player {
 		if(super.getSkillRechargeTime(Skills.ROCK_THROW) == 0)
 		{			
 			if(this.rechargingOpponentSkills.get(Skills.ROCK_THROW) == 0 
-					&& (this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) != 0
+					&& (this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) != 0
 					|| this.rechargingOpponentSkills.get(Skills.PAPER_CUT) != 0))
 			{
 				outputDamageMap.put(Skills.ROCK_THROW, (5.0 * 3.0) - this.rockConsequence());
@@ -105,22 +99,22 @@ public class JarvisPlayer  extends Player {
 				outputDamageMap.put(Skills.ROCK_THROW, -1 * this.rockConsequence());
 		}
 		
-		if(super.getSkillRechargeTime(Skills.SCISSOR_POKE) == 0)
+		if(super.getSkillRechargeTime(Skills.SCISSORS_POKE) == 0)
 		{
 			if(this.rechargingOpponentSkills.get(Skills.PAPER_CUT) == 0 
-					&& (this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) != 0
+					&& (this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) != 0
 					|| this.rechargingOpponentSkills.get(Skills.ROCK_THROW) != 0))
 			{
-				outputDamageMap.put(Skills.SCISSOR_POKE, (5.0 * 3.0) - this.scissorConsequence());
+				outputDamageMap.put(Skills.SCISSORS_POKE, (5.0 * 3.0) - this.scissorConsequence());
 			}
 			else
-				outputDamageMap.put(Skills.SCISSOR_POKE, -1 * this.scissorConsequence());
+				outputDamageMap.put(Skills.SCISSORS_POKE, -1 * this.scissorConsequence());
 		}
 		
 		if(super.getSkillRechargeTime(Skills.PAPER_CUT) == 0)
 		{
 			if(this.rechargingOpponentSkills.get(Skills.ROCK_THROW) == 0 
-					&& (this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) != 0
+					&& (this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) != 0
 					|| this.rechargingOpponentSkills.get(Skills.PAPER_CUT) != 0))
 			{
 				outputDamageMap.put(Skills.PAPER_CUT, (5.0 * 3.0) - this.paperConsequence());
@@ -133,7 +127,7 @@ public class JarvisPlayer  extends Player {
 				this.getOpponentSkillRechargeTime(Skills.REVERSAL_OF_FORTUNE) > 0 && 
 				this.getOpponentSkillRechargeTime(Skills.SHOOT_THE_MOON) > 0 &&
 				   (this.getOpponentSkillRechargeTime(Skills.ROCK_THROW) > 0 ||
-					this.getOpponentSkillRechargeTime(Skills.SCISSOR_POKE) > 0 ||
+					this.getOpponentSkillRechargeTime(Skills.SCISSORS_POKE) > 0 ||
 					this.getOpponentSkillRechargeTime(Skills.PAPER_CUT) > 0)  &&
 				   this.opponentType != PetTypes.INTELLIGENCE)
 		{
@@ -149,9 +143,9 @@ public class JarvisPlayer  extends Player {
 			{
 				skills.add(Skills.ROCK_THROW);
 			}
-			if (this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) == 0) 
+			if (this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) == 0) 
 			{
-				skills.add(Skills.SCISSOR_POKE);
+				skills.add(Skills.SCISSORS_POKE);
 			}
 			if (this.rechargingOpponentSkills.get(Skills.PAPER_CUT) == 0) 
 			{
@@ -165,7 +159,7 @@ public class JarvisPlayer  extends Player {
 			this.predictedSkill = skill;	
 		}
 		
-		rofDiff = randomDifference.get(this.jarvisIndex);
+		rofDiff = randomDifference.get(super.getPlayableUid());
 		
 		if (this.maxROFDiff < rofDiff)
 		{
@@ -225,9 +219,9 @@ public class JarvisPlayer  extends Player {
 			return 10.0;
 		else if (this.opponentType == PetTypes.SPEED && healthPercent >= .25 && healthPercent < .75)
 			return 10.0;
-		else if (this.opponentType == PetTypes.POWER && this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) == 0)
+		else if (this.opponentType == PetTypes.POWER && this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) == 0)
 			return 20.0;
-		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) == 0)
+		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) == 0)
 			return 6.0;
 		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.PAPER_CUT) == 0)
 			return 4.0;
@@ -250,7 +244,7 @@ public class JarvisPlayer  extends Player {
 			return 20.0;
 		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.ROCK_THROW) == 0)
 			return 6.0;
-		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.SCISSOR_POKE) == 0)
+		else if(this.opponentType == PetTypes.INTELLIGENCE && this.rechargingOpponentSkills.get(Skills.SCISSORS_POKE) == 0)
 			return 4.0;
 		else
 			return 0.0;
@@ -288,36 +282,14 @@ public class JarvisPlayer  extends Player {
 		return this.rechargingOpponentSkills.get(skill);
 	}
 	
-	/**
-	 * The method for updating the observable.
-	 */
-	@Override
-	public void update(Observable arg0, Object event) 
-	{
-		if(event instanceof FightStartEvent)
-		{
-			FightStartEvent fse = (FightStartEvent) event;
-			rememberFightStartEvent(fse);
-		}
-		if(event instanceof RoundStartEvent)
-		{
-			RoundStartEvent rse = (RoundStartEvent) event;
-			rememberRoundStartEvent(rse);
-		}         
-		if(event instanceof AttackEvent)
-		{
-			AttackEvent ae = (AttackEvent) event;
-			this.rememberAttackEvent(ae);
-		}
-	}
 	
 	/**
 	 * Record everything in the fight start event that is needed 
 	 * @param event
 	 */
 	protected void rememberFightStartEvent(FightStartEvent event) {
-		this.fightNumber = event.getFightNumber();
-		List<PlayerEventInfo> playerEventInfo = event.getPlayerEventinfo();
+		//this.fightNumber = event.getFightNumber();
+		List<PlayerEventInfo> playerEventInfo = event.getPlayerEventInfoList();
 		this.rechargingOpponentSkills.forEach((key,value) -> value = 0);
 		
 		//Get Opponent information (index and name)
@@ -329,10 +301,12 @@ public class JarvisPlayer  extends Player {
 			{
 				this.jarvisIndex = i;
 				this.opponentIndex = (i + 1) % playerEventInfo.size();
+				int opponentUid = playerEventInfo.get(opponentIndex).getPlayableUid();
 				this.opponentHealth = playerEventInfo.get((i+1) % playerEventInfo.size()).getStartingHp();
 				this.opponentName = playerEventInfo.get(this.opponentIndex).getPetName();
 				this.opponentType = playerEventInfo.get(this.opponentIndex).getPetType();
-				this.randomDifference.put(i, 0.0);
+				this.randomDifference.put(super.getPlayableUid(), 0.0);
+				this.randomDifference.put(opponentUid, 0.0);
 			}
 		}
 	}
@@ -350,24 +324,36 @@ public class JarvisPlayer  extends Player {
 	 */
 	protected void rememberAttackEvent(AttackEvent event)
 	{
-		if(event.getAttackingPlayerIndex() == opponentIndex)
+		if(this.randomDifference.get(event.getAttackingPlayableUid()) == null) {
+			this.randomDifference.put(event.getAttackingPlayableUid(), 0.0);
+		}
+		
+		if(this.randomDifference.get(event.getVictimPlayableUid()) == null) {
+			this.randomDifference.put(event.getVictimPlayableUid(), 0.0);
+		}
+		
+		if(event.getAttackingPlayableUid() == super.getPlayableUid())
 		{
+			Damage d = event.getDamage();
+			
 			int rechargeTime = (event.getAttackingSkillChoice() == Skills.REVERSAL_OF_FORTUNE || event.getAttackingSkillChoice() == Skills.SHOOT_THE_MOON) ? 6 : 1;
 			this.decrementOpponentRechargeTimes();
 			this.rechargingOpponentSkills.put(event.getAttackingSkillChoice(), rechargeTime);
 			
-			this.randomDifference.put(event.getAttackingPlayerIndex(), this.randomDifference.get(event.getAttackingPlayerIndex()) - event.getRandomDamage());
-			this.randomDifference.put(event.getVictimPlayerIndex(), this.randomDifference.get(event.getVictimPlayerIndex()) + event.getRandomDamage());
+			this.randomDifference.put(event.getAttackingPlayableUid(), this.randomDifference.get(event.getAttackingPlayableUid()) - d.getRandomDamage());
+			this.randomDifference.put(event.getVictimPlayableUid(), this.randomDifference.get(event.getVictimPlayableUid()) + d.getRandomDamage());
 			this.roundsSinceUse++;
 			
 			this.lastOpponentAttackSkill = event.getAttackingSkillChoice();
 		}
-		else if(event.getAttackingPlayerIndex() == jarvisIndex)
+		else if(event.getAttackingPlayableUid() == this.opponentUID)
 		{
-			this.opponentHealth -= (event.getConditionalDamage() + event.getRandomDamage());
+			Damage d = event.getDamage();
 			
-			this.randomDifference.put(event.getAttackingPlayerIndex(), this.randomDifference.get(event.getAttackingPlayerIndex()) - event.getRandomDamage());
-			this.randomDifference.put(event.getVictimPlayerIndex(), this.randomDifference.get(event.getVictimPlayerIndex()) + event.getRandomDamage());
+			this.opponentHealth -= (d.getConditionalDamage() + d.getRandomDamage());
+			
+			this.randomDifference.put(event.getAttackingPlayableUid(), this.randomDifference.get(event.getAttackingPlayableUid()) - d.getRandomDamage());
+			this.randomDifference.put(event.getVictimPlayableUid(), this.randomDifference.get(event.getVictimPlayableUid()) + d.getRandomDamage());
 		
 			Skills s = event.getAttackingSkillChoice();
 			this.lastAttackSkill = event.getAttackingSkillChoice();
@@ -390,5 +376,24 @@ public class JarvisPlayer  extends Player {
 			}
 		}
 	}
-}
 
+	@Override
+	public void update(Object event) {
+		// TODO Auto-generated method stub
+		if(event instanceof FightStartEvent)
+		{
+			FightStartEvent fse = (FightStartEvent) event;
+			rememberFightStartEvent(fse);
+		}
+		if(event instanceof RoundStartEvent)
+		{
+			RoundStartEvent rse = (RoundStartEvent) event;
+			rememberRoundStartEvent(rse);
+		}         
+		if(event instanceof AttackEvent)
+		{
+			AttackEvent ae = (AttackEvent) event;
+			this.rememberAttackEvent(ae);
+		}
+	}
+}

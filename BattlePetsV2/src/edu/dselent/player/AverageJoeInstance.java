@@ -1,4 +1,4 @@
-package edu.furbiesfighters.players;
+package edu.dselent.player;
 
 import java.util.ArrayList;
 
@@ -9,54 +9,50 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Random;
 
-import edu.furbiesfighters.events.AttackEvent;
-import edu.furbiesfighters.events.FightStartEvent;
-import edu.furbiesfighters.events.PlayerEventInfo;
-import edu.furbiesfighters.events.RoundStartEvent;
-import edu.furbiesfighters.gameplay.GameSettings;
-import edu.furbiesfighters.skills.Skills;
-import edu.furbiesfighters.utility.Utility;
+import edu.dselent.settings.PlayerInfo;
+import edu.dselent.skill.Skills;
 import jneat.NNode;
 import jneat.Network;
+import jneat.Organism;
 
 /**
  * @author Machine Learning Club
  *
  */
-public class AverageJoe extends JarvisPlayer {
-	private GameSettings gs;
+public class AverageJoeInstance extends JarvisPlayer {
 	private final Skills[] outputOrder = {Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, Skills.ROCK_THROW,
-            Skills.SCISSOR_POKE, Skills.SHOOT_THE_MOON,Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, 
-            Skills.ROCK_THROW, Skills.SCISSOR_POKE};
+            Skills.SCISSORS_POKE, Skills.SHOOT_THE_MOON,Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, 
+            Skills.ROCK_THROW, Skills.SCISSORS_POKE};
+	private Organism org;
 	
-	public AverageJoe(double initialHP, String name, String petName, PetTypes petType) {
-		super(initialHP, name, petName, PetTypes.POWER);
-	}
-	
-	public AverageJoe(double initialHP, String name, String petName, PetTypes petType, GameSettings gs) {
-		super(initialHP, name, petName, PetTypes.POWER);
-		this.gs = gs;
+	public AverageJoeInstance(int playableUid, PlayerInfo playerInfo, Organism org) {
+		super(playableUid, playerInfo);
+		this.org = org;
 	}
 	
 	@Override
 	public Skills chooseSkill() {
-		Utility.printMessage("Average Joe is choosing their skill ");
 		List<Double> input = new ArrayList<Double>();
+		
+		Map<Skills, Integer> rechargeTimes = new HashMap<Skills, Integer>();
+		for(Skills skill : this.outputOrder) {
+			rechargeTimes.put(skill, super.getSkillRechargeTime(skill));
+		}
 		
 		input.addAll(Helpers.generateOneHot(super.opponentType, PetTypes.values().length));
 		input.addAll(Helpers.generateOneHot(super.getPlayerType(), PetTypes.values().length));
-		input.addAll(Helpers.boundedRechargeTime(super.jarvisRechargingSkills));
+		input.addAll(Helpers.boundedRechargeTime(rechargeTimes));
 		input.addAll(Helpers.boundedRechargeTime(super.rechargingOpponentSkills));
 		input.addAll(Helpers.generateOneHot(super.lastAttackSkill, Skills.values().length));
 		input.addAll(Helpers.generateOneHot(super.lastOpponentAttackSkill, Skills.values().length));
-		input.add((double)super.getCurrentHp() / (double)super.getPlayerFullHP());
-		input.add((double)super.opponentHealth / (double)super.getPlayerFullHP());
+		input.add(super.calculateHpPercent());
+		input.add(super.opponentHealth);
 		
 		//System.out.println("Input array: " + input.size());
 		
-		return this.getOuputChoice(input);
+		//return this.getOuputChoice(input);
 		
-		//return super.learnSkill();
+		return super.learnSkill();
 	}
 	
 	private Skills getOuputChoice(List<Double> input) {
@@ -89,9 +85,14 @@ public class AverageJoe extends JarvisPlayer {
 	}
 	
 	private Skills getBestSkill(List<Double> outputs) {
+		Map<Skills, Integer> rechargeTimes = new HashMap<Skills, Integer>();
+		for(Skills skill : this.outputOrder) {
+			rechargeTimes.put(skill, super.getSkillRechargeTime(skill));
+		}
+		
 		int startIndex = 0;
 		Skills skill = this.outputOrder[startIndex];
-		while(startIndex < this.outputOrder.length && super.rechargingSkills.get(skill) != 0) {
+		while(startIndex < this.outputOrder.length && rechargeTimes.get(skill) != 0) {
 			startIndex++;
 			skill = this.outputOrder[startIndex];
 		}
@@ -100,35 +101,12 @@ public class AverageJoe extends JarvisPlayer {
 		
 		for(int i = startIndex + 1; i < 4; i++) {
 			skill = this.outputOrder[i];
-			if(super.rechargingSkills.get(skill) == 0) {
+			if(rechargeTimes.get(skill) == 0) {
 				if(outputs.get(maxIndex) < outputs.get(i))
 					maxIndex = i;
 			}
 		}
 		
 		return this.outputOrder[maxIndex];
-	}
-	
-	/**
-	 * The method for updating the observable.
-	 */
-	@Override
-	public void update(Observable arg0, Object event) 
-	{
-		if(event instanceof FightStartEvent)
-		{
-			FightStartEvent fse = (FightStartEvent) event;
-			super.rememberFightStartEvent(fse);
-		}
-		if(event instanceof RoundStartEvent)
-		{
-			RoundStartEvent rse = (RoundStartEvent) event;
-			super.rememberRoundStartEvent(rse);
-		}         
-		if(event instanceof AttackEvent)
-		{
-			AttackEvent ae = (AttackEvent) event;
-			super.rememberAttackEvent(ae);
-		}
 	}
 }

@@ -39,7 +39,7 @@ public class GameSettings {
 		this.neat_types = neat_types;
 		this.organism = organism;
 		this.ai_name = ai_name;
-		//fitness = 0.0;
+		fitness = -1000.0;
 	}	
 	
 	public void setFitness(double fitness) {

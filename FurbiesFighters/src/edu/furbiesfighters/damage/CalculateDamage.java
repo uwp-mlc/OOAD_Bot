@@ -36,7 +36,7 @@ public class CalculateDamage implements Calculatable
 	//Constructor for class
 	public CalculateDamage(Referee ref)
 	{
-		this.rng = new Random(387563l);
+		this.rng = new Random();//387563l
 		this.ref = ref;
 	}
 	
