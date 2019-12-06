@@ -58,6 +58,8 @@
    * If this is too long ago, the Species will goes extinct. 
    */
 	  int age_of_last_improvement;
+	  
+	  Organism best_org;
    
 	   public int getId() {
 		 return id;
@@ -119,7 +121,10 @@
 	  }         
 	   public void setAge_of_last_improvement(int age_of_last_improvement) {
 		 this.age_of_last_improvement = age_of_last_improvement;
-	  }         
+	  }
+	   public Organism getBest_Organism() {
+			 return best_org;
+		  }     
    
    /**
    * costructor with inly  ID of specie
@@ -264,17 +269,18 @@
    */
 	   public void compute_max_fitness() 
 	  {
-		 double max = 0.0;
-		 double total = 0.0;
-	  
+		 double max = -100.0;
+
 		 Iterator itr_organism;
 		 itr_organism = organisms.iterator();
-	  
+	
 		 while (itr_organism.hasNext()) 
 		 {
 			Organism _organism = ((Organism) itr_organism.next());
-			if (_organism.fitness > max)
+			if (_organism.fitness > max) {
 			   max = _organism.fitness;
+			   best_org = _organism;
+			}
 		 }
 		 max_fitness = max;
 	  }             
