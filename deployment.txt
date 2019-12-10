@@ -1,0 +1,7 @@
+--Dependencies--
+jneat
+jNeatCommon
+
+--Files--
+serialized net file
+AverageJoe.java

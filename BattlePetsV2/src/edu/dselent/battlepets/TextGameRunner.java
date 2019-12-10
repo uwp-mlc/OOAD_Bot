@@ -1,5 +1,6 @@
 package edu.dselent.battlepets;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -61,7 +62,7 @@ public class TextGameRunner implements GameRunner
 		return new Population(filename);
 	}
 	
-	private List<PlayerInfo> createPlayerInfoList(){
+	private List<PlayerInfo> createOrgVOrgInfoList(){
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
@@ -74,6 +75,58 @@ public class TextGameRunner implements GameRunner
 				.build();
 		
 		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Nick")
+				.withPetName("Nick Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		playerInfoList.add(playerInfo);
+		playerInfoList.add(playerInfo2);
+		
+		return playerInfoList;
+	}
+	
+	private List<PlayerInfo> createJarvisVOrgInfoList(){
+		List<PlayerInfo> playerInfoList = new ArrayList<>();
+		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
+		
+		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Garrett")
+				.withPetName("Garrett Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.JARVIS)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Nick")
+				.withPetName("Nick Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		playerInfoList.add(playerInfo);
+		playerInfoList.add(playerInfo2);
+		
+		return playerInfoList;
+	}
+	
+	private List<PlayerInfo> createRandomVOrgInfoList(){
+		List<PlayerInfo> playerInfoList = new ArrayList<>();
+		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
+		
+		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
+				.withPetType(PetTypes.POWER)
+				.withPlayerName("Garrett")
+				.withPetName("Garrett Pet")
+				.withStartingHp(100.0)
+				.withSkillSet(EnumSet.allOf(Skills.class))
+				.build();
+		
+		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.COMPUTER)
 				.withPetType(PetTypes.POWER)
 				.withPlayerName("Nick")
 				.withPetName("Nick Pet")
@@ -138,8 +191,6 @@ public class TextGameRunner implements GameRunner
 
 		int trainingGenerationLen = 5;
 		
-		
-		
 		Population neatPop = this.createPopulation("J:\\Python\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
 		for(Object o : neatPop.getSpecies()) {
@@ -167,31 +218,40 @@ public class TextGameRunner implements GameRunner
 				Organism _org = (Organism) iterOrgs.next();
 				int numSimulations = 0;
 				double fitness = 0;
-				for(List<Organism> orgs : opponents.values()) {
-					for(Organism o : orgs) {
-						numSimulations++;
-						GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
-						List<Organism> orgList = new ArrayList<Organism>();
-						orgList.add(_org);
-						orgList.add(o);
-						List<PlayerInfo> playerInfoList = this.createPlayerInfoList();
-						List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
-						TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
-						battleControl.runBattle();
-						
-						double aiHp = playableList.get(0).getCurrentHp();
-						double opponentHp = playableList.get(1).getCurrentHp();
-						if(opponentHp < 0) {
-							opponentHp = 0;
+				GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
+				List<PlayerInfo> playerInfoList = this.createRandomVOrgInfoList();
+				List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
+				TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
+				fitness += runSimulation(battleControl, playableList);
+				
+				// Go on with training if agent is better than random
+				if(fitness > 0) {
+					playerInfoList = this.createJarvisVOrgInfoList();
+					playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
+					battleControl = new TextBattleControl(gameSettings, playableList);
+					fitness += runSimulation(battleControl, playableList);
+				
+					// Go on with training if agent is better than hardcoded bot
+					if(fitness > 0) {
+						for(List<Organism> orgs : opponents.values()) {
+							for(Organism o : orgs) {
+								numSimulations++;
+								List<Organism> orgList = new ArrayList<Organism>();
+								orgList.add(_org);
+								orgList.add(o);
+								playerInfoList = this.createOrgVOrgInfoList();
+								playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
+								battleControl = new TextBattleControl(gameSettings, playableList);
+								
+								fitness += runSimulation(battleControl, playableList);
+							}
 						}
-						double healthDiff = aiHp - opponentHp;
-						fitness += healthDiff;
+						fitness = fitness / numSimulations + 2;
+						_org.setFitness(fitness);
+						fitnesses.add(fitness);
+						//System.out.println("Org Fitness: " + gs.getFitness());
 					}
 				}
-				fitness = fitness / numSimulations;
-				_org.setFitness(fitness);
-				fitnesses.add(fitness);
-				//System.out.println("Org Fitness: " + gs.getFitness());
 			}
 			Set<Species> speciesSet = new HashSet<>(opponents.keySet());
 			for(Species s : speciesSet) {
@@ -223,6 +283,18 @@ public class TextGameRunner implements GameRunner
 			Species s = (Species)o;
 			System.out.println("Best species fitness: " + s.getMax_fitness_ever());
 		}
+	}
+	
+	private double runSimulation(TextBattleControl battleControl, List<Playable> playableList) {
+		battleControl.runBattle();
+		
+		double aiHp = playableList.get(0).getCurrentHp();
+		double opponentHp = playableList.get(1).getCurrentHp();
+		if(opponentHp < 0) {
+			opponentHp = 0;
+		}
+		double healthDiff = aiHp - opponentHp;
+		return healthDiff;
 	}
 	
 }
