@@ -8,9 +8,11 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Vector;
 
 import edu.dselent.config.ApplicationConfigurations;
@@ -60,6 +62,10 @@ public class TextGameRunner implements GameRunner
 		
 	}
 	
+	private Population createPopulation(String filename) {
+		return new Population(filename);
+	}
+	
 	private List<PlayerInfo> createPlayerInfoList(){
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
@@ -72,7 +78,7 @@ public class TextGameRunner implements GameRunner
 				.withSkillSet(EnumSet.allOf(Skills.class))
 				.build();
 		
-		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.COMPUTER)
+		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(PetTypes.POWER)
 				.withPlayerName("Nick")
 				.withPetName("Nick Pet")
@@ -139,10 +145,23 @@ public class TextGameRunner implements GameRunner
 		
 		
 		
-		Population neatPop = this.createPopulation();
+		Population neatPop = this.createPopulation("J:\\Python\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
+		for(Object o : neatPop.getSpecies()) {
+			Species s = (Species)o;
+			s.compute_average_fitness();
+			s.compute_max_fitness();
+			Organism best_org = s.getBest_Organism();
+			
+			if(best_org != null)
+				opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
+		}
 		int generation = 0;
-		int maxGenerations = 1;
+		int maxGenerations = 100;
+		
+		System.out.println(opponents.toString());
+		
+		neatPop = this.createPopulation();
 		
 		List<Double> fitnesses = new ArrayList<Double>();
 		
@@ -151,27 +170,36 @@ public class TextGameRunner implements GameRunner
 			neatPop.setHighest_fitness(-100.00);
 			while(iterOrgs.hasNext()) {
 				Organism _org = (Organism) iterOrgs.next();
-				
-				GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
-				List<PlayerInfo> playerInfoList = this.createPlayerInfoList();
-				List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
-				TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
-				battleControl.runBattle();
-				
-				double aiHp = playableList.get(0).getCurrentHp();
-				System.out.println("AI HP: " + aiHp);
-				double opponentHp = playableList.get(1).getCurrentHp();
-				if(opponentHp < 0) {
-					opponentHp = 0;
+				int numSimulations = 0;
+				double fitness = 0;
+				for(List<Organism> orgs : opponents.values()) {
+					for(Organism o : orgs) {
+						numSimulations++;
+						GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
+						List<Organism> orgList = new ArrayList<Organism>();
+						orgList.add(_org);
+						orgList.add(o);
+						List<PlayerInfo> playerInfoList = this.createPlayerInfoList();
+						List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
+						TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
+						battleControl.runBattle();
+						
+						double aiHp = playableList.get(0).getCurrentHp();
+						double opponentHp = playableList.get(1).getCurrentHp();
+						if(opponentHp < 0) {
+							opponentHp = 0;
+						}
+						double healthDiff = aiHp - opponentHp;
+						fitness += healthDiff;
+					}
 				}
-				System.out.println("Opponent HP: " + opponentHp);
-				double healthDiff = aiHp - opponentHp;
-				_org.setFitness(healthDiff);
-				fitnesses.add(healthDiff);
+				fitness = fitness / numSimulations;
+				_org.setFitness(fitness);
+				fitnesses.add(fitness);
 				//System.out.println("Org Fitness: " + gs.getFitness());
 			}
-			
-			for(Species s : opponents.keySet()) {
+			Set<Species> speciesSet = new HashSet<>(opponents.keySet());
+			for(Species s : speciesSet) {
 				if(!neatPop.getSpecies().contains(s)) {
 					opponents.remove(s);
 				}
@@ -186,16 +214,11 @@ public class TextGameRunner implements GameRunner
 					opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
 			}
 			//neatPop.viewtext();
-			neatPop.epoch(generation++);
-			System.out.println("\nHigh Fitness: " + neatPop.getHighest_fitness());
 			for(Species s : opponents.keySet()) {
 				List<Organism> orgs = opponents.get(s);
-
-				System.out.println(orgs.size());
 			}
-
-			System.out.println(neatPop.getSpecies().size());
-			System.out.println(opponents);
+			neatPop.epoch(generation++);
+			System.out.println("Finished Generation: " + generation);
 			neatPop.print_to_file_by_species("SavedPopulation.txt");
 			
 		}

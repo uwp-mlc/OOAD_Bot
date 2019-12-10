@@ -77,6 +77,20 @@ public class PlayableInstantiator
 		return playableList;
 	}
 	
+	public static List<Playable> instantiatePlayables(List<PlayerInfo> playerInfoList, List<Organism> org)
+	{
+		List<Playable> playableList = new ArrayList<>();
+
+		for(int i=0; i<playerInfoList.size(); i++)
+		{
+			PlayerInfo playerInfo = playerInfoList.get(i);
+			Playable playable = instantiatePlayable(i, playerInfo, org.get(i));
+			playableList.add(playable);
+		}
+		
+		return playableList;
+	}
+	
 	public static Playable instantiatePlayable(int playableUid, PlayerInfo playerInfo, Organism org)
 	{
 		Playable thePlayable = null;
