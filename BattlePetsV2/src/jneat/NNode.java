@@ -9,8 +9,13 @@
  * A NODE is either a NEURON or a SENSOR. If it's a sensor, it can be loaded with a value for output
  * If it's a neuron, it has a list of its incoming input signals Use an activation count to avoid flushing
  */
-	public class NNode extends Neat {
-   /** type is either SIGMOID ..or others that can be added */
+	public class NNode extends Neat implements java.io.Serializable {
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 6851179066566722597L;
+
+/** type is either SIGMOID ..or others that can be added */
 	  int ftype;
    
    /** type is either NEURON or SENSOR */

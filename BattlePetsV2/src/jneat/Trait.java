@@ -12,8 +12,13 @@
  * on every node.  Instead, each node can simply point to a trait
  * and those traits can evolve on their own
  */
-	public class Trait extends Neat {
+	public class Trait extends Neat implements java.io.Serializable {
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7520196183205978371L;
+
+/**
    * Numeric identification of trait
    */
 	  int trait_id;

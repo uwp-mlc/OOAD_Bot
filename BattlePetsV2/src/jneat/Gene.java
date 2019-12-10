@@ -7,9 +7,15 @@
    import jNeatCommon.*;
 
 /** Is a genetic codification of gene; */
-	public class Gene extends Neat {
+	public class Gene extends Neat implements java.io.Serializable {
    
-   /** if a reference to object for identify input/output node and features */
+
+/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7046561403015155162L;
+
+/** if a reference to object for identify input/output node and features */
 	  Link lnk;
    
    /** is historical marking of node */

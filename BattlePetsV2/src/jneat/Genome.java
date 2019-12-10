@@ -8,9 +8,14 @@
    import jNeatCommon.*;
 
 
-																public class Genome extends Neat {
+public class Genome extends Neat implements java.io.Serializable {
    
-   /** Is a reference from this genotype to fenotype */
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3914313920013473006L;
+
+/** Is a reference from this genotype to fenotype */
 	  Network phenotype;
    
    /** Numeric identification for this genotype */

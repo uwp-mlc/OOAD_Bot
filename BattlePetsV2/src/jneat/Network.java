@@ -5,8 +5,13 @@
    import java.util.*;
 
    import jNeatCommon.*;
-																																public class Network extends Neat {
+public class Network extends Neat implements java.io.Serializable {
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 9202989283848583621L;
+
+/**
    * Is a collection of object NNode can be mapped in a Vector container;
    * this collection represent a group of references to input nodes;
    */

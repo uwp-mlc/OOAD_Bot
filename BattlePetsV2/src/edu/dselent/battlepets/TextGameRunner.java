@@ -1,5 +1,10 @@
 package edu.dselent.battlepets;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -192,6 +197,7 @@ public class TextGameRunner implements GameRunner
 			System.out.println(neatPop.getSpecies().size());
 			System.out.println(opponents);
 			neatPop.print_to_file_by_species("SavedPopulation.txt");
+			
 		}
 		
 		System.out.println("\n" + fitnesses.toString());
@@ -200,6 +206,62 @@ public class TextGameRunner implements GameRunner
 			Species s = (Species)o;
 			System.out.println("Best species fitness: " + s.getMax_fitness_ever());
 		}
+		
+		
+		this.saveNetwork((Organism)neatPop.organisms.get(1));
+	}
+	
+	private void saveNetwork(Organism org) {
+		// Serialization  
+        try
+        {    
+            //Saving of object in a file 
+            FileOutputStream file = new FileOutputStream("saved_network"); 
+            ObjectOutputStream out = new ObjectOutputStream(file); 
+              
+            // Method for serialization of object 
+            out.writeObject(org); 
+              
+            out.close(); 
+            file.close(); 
+              
+            System.out.println("Object has been serialized"); 
+  
+        } 
+          
+        catch(IOException ex) 
+        { 
+            System.out.println("IOException is caught " + ex.toString()); 
+        } 
+	}
+	
+	private void loadNetwork() {
+		try
+        {    
+            // Reading the object from a file 
+            FileInputStream file = new FileInputStream(filename); 
+            ObjectInputStream in = new ObjectInputStream(file); 
+              
+            // Method for deserialization of object 
+            Organism object1 = (Organism)in.readObject(); 
+              
+            in.close(); 
+            file.close(); 
+              
+            System.out.println("Object has been deserialized "); 
+            System.out.println("a = " + object1.a); 
+            System.out.println("b = " + object1.b); 
+        } 
+          
+        catch(IOException ex) 
+        { 
+            System.out.println("IOException is caught"); 
+        } 
+          
+        catch(ClassNotFoundException ex) 
+        { 
+            System.out.println("ClassNotFoundException is caught"); 
+        } 
 	}
 	
 }

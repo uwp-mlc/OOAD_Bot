@@ -7,8 +7,13 @@
    import java.text.*;
    import jNeatCommon.*;
 
-																public class Species extends Neat {
+public class Species extends Neat implements java.io.Serializable {
    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -7704958211282418202L;
+
+/**
    * id(-entification) of this species
    */
 	  int id;

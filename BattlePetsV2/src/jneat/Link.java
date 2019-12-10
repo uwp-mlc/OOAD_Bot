@@ -6,8 +6,12 @@
  * Link is a connection from one node to another with an associated weight; It can be marked as recurrent;
  * Its parameters are made public for efficiency.
  */
-	public class Link extends Neat {
-   /** is a real value of weight of connection(link) */
+	public class Link extends Neat implements java.io.Serializable {
+   /**
+				 * 
+				 */
+				private static final long serialVersionUID = 5793442355039220674L;
+/** is a real value of weight of connection(link) */
 	  double weight;
    /** is a reference to an  input node */
 	  NNode in_node;
