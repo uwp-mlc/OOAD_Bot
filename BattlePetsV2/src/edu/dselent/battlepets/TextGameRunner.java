@@ -36,6 +36,7 @@ import jneat.Organism;
 import jneat.Population;
 import jneat.Species;
 import jneat.Neat;
+import jneat.Network;
 
 public class TextGameRunner implements GameRunner
 {
@@ -145,7 +146,7 @@ public class TextGameRunner implements GameRunner
 		
 		
 		
-		Population neatPop = this.createPopulation("J:\\Python\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
+		Population neatPop = this.createPopulation("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
 		for(Object o : neatPop.getSpecies()) {
 			Species s = (Species)o;
@@ -157,7 +158,7 @@ public class TextGameRunner implements GameRunner
 				opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
 		}
 		int generation = 0;
-		int maxGenerations = 100;
+		int maxGenerations = 1;
 		
 		System.out.println(opponents.toString());
 		
@@ -166,6 +167,7 @@ public class TextGameRunner implements GameRunner
 		List<Double> fitnesses = new ArrayList<Double>();
 		
 		while(generation < maxGenerations) {
+			System.out.println("Starting Generation: " + generation);
 			Iterator iterOrgs = neatPop.getOrganisms().iterator();
 			neatPop.setHighest_fitness(-100.00);
 			while(iterOrgs.hasNext()) {
@@ -194,6 +196,7 @@ public class TextGameRunner implements GameRunner
 					}
 				}
 				fitness = fitness / numSimulations;
+				System.out.println("Fitness is: " + fitness);
 				_org.setFitness(fitness);
 				fitnesses.add(fitness);
 				//System.out.println("Org Fitness: " + gs.getFitness());
@@ -230,25 +233,39 @@ public class TextGameRunner implements GameRunner
 			System.out.println("Best species fitness: " + s.getMax_fitness_ever());
 		}
 		
+		Organism best_org = this.getBestOrganismFromSpecies(neatPop);
 		
-		this.saveNetwork((Organism)neatPop.organisms.get(1));
+		this.saveNetwork(best_org.getNet());
 	}
 	
-	private void saveNetwork(Organism org) {
-		// Serialization  
+	private Organism getBestOrganismFromSpecies(Population neatPop) {
+		Organism best_org = null;
+		for(Object o : neatPop.getSpecies()) {
+			Species s = (Species)o;
+			s.compute_average_fitness();
+			s.compute_max_fitness();
+			Organism tmp_best_org = s.getBest_Organism();
+			if(best_org == null || tmp_best_org.getFitness() > best_org.getFitness())
+				best_org = tmp_best_org;
+		}
+		
+		return best_org;
+	}
+	
+	private void saveNetwork(Network net) {
         try
         {    
             //Saving of object in a file 
-            FileOutputStream file = new FileOutputStream("saved_network"); 
+            FileOutputStream file = new FileOutputStream("saved_net.ser"); 
             ObjectOutputStream out = new ObjectOutputStream(file); 
               
             // Method for serialization of object 
-            out.writeObject(org); 
+            out.writeObject(net); 
               
             out.close(); 
             file.close(); 
               
-            System.out.println("Object has been serialized"); 
+            System.out.println("Network has been serialized"); 
   
         } 
           
@@ -257,34 +274,6 @@ public class TextGameRunner implements GameRunner
             System.out.println("IOException is caught " + ex.toString()); 
         } 
 	}
-	
-	private void loadNetwork() {
-		try
-        {    
-            // Reading the object from a file 
-            FileInputStream file = new FileInputStream(filename); 
-            ObjectInputStream in = new ObjectInputStream(file); 
-              
-            // Method for deserialization of object 
-            Organism object1 = (Organism)in.readObject(); 
-              
-            in.close(); 
-            file.close(); 
-              
-            System.out.println("Object has been deserialized "); 
-            System.out.println("a = " + object1.a); 
-            System.out.println("b = " + object1.b); 
-        } 
-          
-        catch(IOException ex) 
-        { 
-            System.out.println("IOException is caught"); 
-        } 
-          
-        catch(ClassNotFoundException ex) 
-        { 
-            System.out.println("ClassNotFoundException is caught"); 
-        } 
-	}
+
 	
 }

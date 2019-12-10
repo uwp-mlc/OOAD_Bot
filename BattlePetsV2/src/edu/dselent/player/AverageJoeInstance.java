@@ -1,5 +1,8 @@
 package edu.dselent.player;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import neat.helpers.*;
@@ -27,11 +30,12 @@ public class AverageJoeInstance extends JarvisPlayer {
             Skills.SCISSORS_POKE, Skills.SHOOT_THE_MOON,Skills.PAPER_CUT, Skills.REVERSAL_OF_FORTUNE, 
             Skills.ROCK_THROW, Skills.SCISSORS_POKE};
 	private Organism org;
+	private Network net;
 	
 	public AverageJoeInstance(int playableUid, PlayerInfo playerInfo, Organism org) {
 		super(playableUid, playerInfo);
 		this.org = org;
-		
+		//loadNetwork();
 		//IOseq io = new IOseq("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2");
 		Population p = new Population("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2");
 	}
@@ -114,5 +118,35 @@ public class AverageJoeInstance extends JarvisPlayer {
 		}
 		
 		return this.outputOrder[maxIndex];
+	}
+	
+	private void loadNetwork() {
+		Network net = null; 
+		  
+        // Deserialization 
+        try
+        {    
+            // Reading the object from a file 
+            FileInputStream file = new FileInputStream("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\saved_net.ser"); 
+            ObjectInputStream in = new ObjectInputStream(file); 
+              
+            // Method for deserialization of object 
+            net = (Network)in.readObject(); 
+              
+            in.close(); 
+            file.close();
+        } 
+          
+        catch(IOException ex) 
+        { 
+            System.out.println("IOException is caught"); 
+        } 
+          
+        catch(ClassNotFoundException ex) 
+        { 
+            System.out.println("ClassNotFoundException is caught"); 
+        } 
+        
+        this.net = net;
 	}
 }
