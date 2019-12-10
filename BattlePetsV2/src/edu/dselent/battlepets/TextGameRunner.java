@@ -66,16 +66,19 @@ public class TextGameRunner implements GameRunner
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
+		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
+		System.out.println(my_type.toString());
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
-				.withPetType(PetTypes.POWER)
+				.withPetType(my_type)
 				.withPlayerName("Garrett")
 				.withPetName("Garrett Pet")
 				.withStartingHp(100.0)
 				.withSkillSet(EnumSet.allOf(Skills.class))
 				.build();
 		
+		PetTypes opp_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
-				.withPetType(PetTypes.POWER)
+				.withPetType(opp_type)
 				.withPlayerName("Nick")
 				.withPetName("Nick Pet")
 				.withStartingHp(100.0)
@@ -92,8 +95,9 @@ public class TextGameRunner implements GameRunner
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
+		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
-				.withPetType(PetTypes.POWER)
+				.withPetType(my_type)
 				.withPlayerName("Garrett")
 				.withPetName("Garrett Pet")
 				.withStartingHp(100.0)
@@ -117,17 +121,18 @@ public class TextGameRunner implements GameRunner
 	private List<PlayerInfo> createRandomVOrgInfoList(){
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
-		
+		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
-				.withPetType(PetTypes.POWER)
+				.withPetType(my_type)
 				.withPlayerName("Garrett")
 				.withPetName("Garrett Pet")
 				.withStartingHp(100.0)
 				.withSkillSet(EnumSet.allOf(Skills.class))
 				.build();
 		
+		PetTypes opp_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo2 = playerInfoBuilder.withPlayerType(PlayerTypes.COMPUTER)
-				.withPetType(PetTypes.POWER)
+				.withPetType(opp_type)
 				.withPlayerName("Nick")
 				.withPetName("Nick Pet")
 				.withStartingHp(100.0)
