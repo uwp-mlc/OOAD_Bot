@@ -102,7 +102,7 @@ public class TextBattleControl
 		{
 			if(winCounts[i] == max)
 			{
-				ioManager.getOutputSender().outputString(playerList.get(i).getPetName());
+				ioManager.getOutputSender().outputString(playerList.get(i).getPetName() + " of type " + playerList.get(i).getPlayerType());
 			}
 		}
 		

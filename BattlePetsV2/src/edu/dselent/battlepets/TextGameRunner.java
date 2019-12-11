@@ -1,5 +1,7 @@
 package edu.dselent.battlepets;
 
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -32,11 +34,12 @@ import jneat.Organism;
 import jneat.Population;
 import jneat.Species;
 import jneat.Neat;
+import jneat.Network;
 
 public class TextGameRunner implements GameRunner
 {
 	private Population createPopulation() {
-		int popSize = 100;
+		int popSize = 75;
 		
 		// 3 opponent type
 		// 3 its type
@@ -67,7 +70,7 @@ public class TextGameRunner implements GameRunner
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
 		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
-		System.out.println(my_type.toString());
+		//System.out.println(my_type.toString());
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -196,7 +199,10 @@ public class TextGameRunner implements GameRunner
 
 		int trainingGenerationLen = 5;
 		
-		Population neatPop = this.createPopulation("J:\\Python\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
+		Population neatPop = this.createPopulation("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_3.txt");
+		
+		//this.saveNetwork(this.getBestOrganismFromSpecies(neatPop).getNet());
+		
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
 		for(Object o : neatPop.getSpecies()) {
 			Species s = (Species)o;
@@ -208,7 +214,7 @@ public class TextGameRunner implements GameRunner
 				opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
 		}
 		int generation = 0;
-		int maxGenerations = 100;
+		int maxGenerations = 1000;
 		
 		System.out.println(opponents.toString());
 		
@@ -224,39 +230,40 @@ public class TextGameRunner implements GameRunner
 				int numSimulations = 0;
 				double fitness = 0;
 				GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
-				List<PlayerInfo> playerInfoList = this.createRandomVOrgInfoList();
+				List<PlayerInfo> playerInfoList = this.createRandomVOrgInfoList();// this.createOrgVOrgInfoList();
 				List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
 				TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
 				fitness += runSimulation(battleControl, playableList);
 				
 				// Go on with training if agent is better than random
-				if(fitness > 0) {
-					playerInfoList = this.createJarvisVOrgInfoList();
-					playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
-					battleControl = new TextBattleControl(gameSettings, playableList);
-					fitness += runSimulation(battleControl, playableList);
+//				if(fitness > 0) {
+//					playerInfoList = this.createJarvisVOrgInfoList();
+//					playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
+//					battleControl = new TextBattleControl(gameSettings, playableList);
+//					fitness += runSimulation(battleControl, playableList);
+//					System.out.println(fitness);
 				
 					// Go on with training if agent is better than hardcoded bot
-					if(fitness > 0) {
-						for(List<Organism> orgs : opponents.values()) {
-							for(Organism o : orgs) {
-								numSimulations++;
-								List<Organism> orgList = new ArrayList<Organism>();
-								orgList.add(_org);
-								orgList.add(o);
-								playerInfoList = this.createOrgVOrgInfoList();
-								playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
-								battleControl = new TextBattleControl(gameSettings, playableList);
-								
-								fitness += runSimulation(battleControl, playableList);
-							}
-						}
-						fitness = fitness / numSimulations + 2;
-						_org.setFitness(fitness);
-						fitnesses.add(fitness);
-						//System.out.println("Org Fitness: " + gs.getFitness());
-					}
-				}
+//					if(fitness > 0) {
+//						for(List<Organism> orgs : opponents.values()) {
+//							for(Organism o : orgs) {
+//								numSimulations++;
+//								List<Organism> orgList = new ArrayList<Organism>();
+//								orgList.add(_org);
+//								orgList.add(o);
+//								playerInfoList = this.createOrgVOrgInfoList();
+//								playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
+//								battleControl = new TextBattleControl(gameSettings, playableList);
+//								
+//								fitness += runSimulation(battleControl, playableList);
+//							}
+//						}
+//						fitness = fitness / numSimulations + 2;
+//						_org.setFitness(fitness);
+//						fitnesses.add(fitness);
+//						//System.out.println("Org Fitness: " + gs.getFitness());
+//					}
+//				}
 			}
 			Set<Species> speciesSet = new HashSet<>(opponents.keySet());
 			for(Species s : speciesSet) {
@@ -269,6 +276,7 @@ public class TextGameRunner implements GameRunner
 				s.compute_average_fitness();
 				s.compute_max_fitness();
 				Organism best_org = s.getBest_Organism();
+				//System.out.println("BEST ORG FITNESS: " + best_org.getFitness());
 				
 				if(best_org != null)
 					opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
@@ -279,8 +287,11 @@ public class TextGameRunner implements GameRunner
 			}
 			neatPop.epoch(generation++);
 			System.out.println("Finished Generation: " + generation);
-			neatPop.print_to_file_by_species("SavedPopulation.txt");
+			//neatPop.print_to_file_by_species("SavedPopulationCKPT_3.txt");
 		}
+		
+		neatPop.print_to_file_by_species("SavedPopulationCKPT_3.txt");
+		this.saveNetwork(this.getBestOrganismFromSpecies(neatPop).getNet());
 		
 		System.out.println("\n" + fitnesses.toString());
 		System.out.println("Species size: " + neatPop.getSpecies().size());
@@ -288,6 +299,20 @@ public class TextGameRunner implements GameRunner
 			Species s = (Species)o;
 			System.out.println("Best species fitness: " + s.getMax_fitness_ever());
 		}
+	}
+	
+	private Organism getBestOrganismFromSpecies(Population neatPop) {
+		Organism best_org = null;
+		for(Object o : neatPop.getSpecies()) {
+			Species s = (Species)o;
+			s.compute_average_fitness();
+			s.compute_max_fitness();
+			Organism tmp_best_org = s.getBest_Organism();
+			if(best_org == null || tmp_best_org.getFitness() > best_org.getFitness())
+				best_org = tmp_best_org;
+		}
+
+		return best_org;
 	}
 	
 	private double runSimulation(TextBattleControl battleControl, List<Playable> playableList) {
@@ -300,6 +325,30 @@ public class TextGameRunner implements GameRunner
 		}
 		double healthDiff = aiHp - opponentHp;
 		return healthDiff;
+	}
+	
+	private void saveNetwork(Network net) {
+        try
+        {    
+            //Saving of object in a file 
+            //FileOutputStream file = new FileOutputStream("saved_network"); 
+            FileOutputStream file = new FileOutputStream("saved_net2.ser"); 
+            ObjectOutputStream out = new ObjectOutputStream(file); 
+
+            // Method for serialization of object 
+            //out.writeObject(org); 
+            out.writeObject(net); 
+
+            out.close(); 
+            file.close(); 
+
+            System.out.println("Object has been serialized"); 
+            System.out.println("Network has been serialized"); 
+
+        } 
+        catch(Exception e) {
+        	System.out.println(e.toString());
+        }
 	}
 	
 }
