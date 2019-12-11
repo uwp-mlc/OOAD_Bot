@@ -5,3 +5,4 @@ jNeatCommon
 --Files--
 serialized net file
 AverageJoe.java
+Jarvis.java
