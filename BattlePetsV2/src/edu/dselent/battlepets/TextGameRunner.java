@@ -67,7 +67,6 @@ public class TextGameRunner implements GameRunner
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
 		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
-		System.out.println(my_type.toString());
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -196,7 +195,7 @@ public class TextGameRunner implements GameRunner
 
 		int trainingGenerationLen = 5;
 		
-		Population neatPop = this.createPopulation("J:\\Python\\OOAD_Bot\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
+		Population neatPop = this.createPopulation("C:\\Users\\My\\Desktop\\BattlePets\\BattlePetsV2\\SavedPopulationCKPT_1.txt");
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
 		for(Object o : neatPop.getSpecies()) {
 			Species s = (Species)o;
@@ -208,7 +207,7 @@ public class TextGameRunner implements GameRunner
 				opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
 		}
 		int generation = 0;
-		int maxGenerations = 100;
+		int maxGenerations = 5000;
 		
 		System.out.println(opponents.toString());
 		
