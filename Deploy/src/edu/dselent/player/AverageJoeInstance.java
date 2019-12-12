@@ -126,7 +126,7 @@ public class AverageJoeInstance extends JarvisPlayer {
         try
         {    
             // Reading the object from a file 
-            FileInputStream file = new FileInputStream("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\saved_net.ser"); 
+            FileInputStream file = new FileInputStream("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\saved_net2.ser"); 
             ObjectInputStream in = new ObjectInputStream(file); 
               
             // Method for deserialization of object 
