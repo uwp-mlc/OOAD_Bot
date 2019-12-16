@@ -23,16 +23,18 @@ import edu.dselent.skill.Skills;
  */
 public class JarvisPlayer extends PetInstance {
 	protected Map<Skills, Integer> rechargingOpponentSkills;//, jarvisRechargingSkills;
-	private int roundNumber, fightNumber, opponentIndex, jarvisIndex, opponentUID;
+	private int roundNumber, fightNumber, opponentIndex, jarvisIndex;
+	protected int opponentUID;
 	private String opponentName;
 	protected PetTypes opponentType;
-	private Map<Integer, Double> randomDifference;
+	protected Map<Integer, Double> randomDifference;
 	protected double opponentHealth;
 	private Random random;
-	private int roundsSinceUse;
+	protected int roundsSinceUse;
 	private double maxROFDiff;
 	private Skills predictedSkill;//Override from the Player... We want to use this one. 
 	protected Skills lastAttackSkill, lastOpponentAttackSkill;
+	protected double lastConditionalDamage = 0.0;
 	
 	public JarvisPlayer(int playableUid, PlayerInfo playerInfo) {
 		super(playableUid, playerInfo);
@@ -357,6 +359,7 @@ public class JarvisPlayer extends PetInstance {
 		
 			Skills s = event.getAttackingSkillChoice();
 			this.lastAttackSkill = event.getAttackingSkillChoice();
+			this.lastConditionalDamage = event.getDamage().getConditionalDamage();
 		}
 	}
 	

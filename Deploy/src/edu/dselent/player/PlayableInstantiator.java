@@ -45,9 +45,9 @@ public class PlayableInstantiator
 		{
 			thePlayable = new JarvisPlayer(playableUid, playerInfo);
 		}
-		else if (playerType == PlayerTypes.AVERAGE_JOE)
+		else if (playerType == PlayerTypes.MLC)
 		{
-			thePlayable = new AverageJoeInstance(playableUid, playerInfo);
+			thePlayable = new MLC_Instance(playableUid, playerInfo);
 		}
 		/*
 		Add more here

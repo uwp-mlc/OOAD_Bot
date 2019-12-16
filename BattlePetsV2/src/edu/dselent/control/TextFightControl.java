@@ -67,6 +67,7 @@ class TextFightControl
 		for(Playable currentPlayable : playerList)
 		{
 			PlayerEventInfoBuilder peib = new PlayerEventInfoBuilder();
+			peib.withPlayableUid(currentPlayable.getPlayableUid());
 			
 			peib.withPetName(currentPlayable.getPetName());
 			peib.withPetType(currentPlayable.getPetType());

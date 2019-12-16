@@ -35,7 +35,7 @@ public class FightStartEvent extends BaseEvent
 	public List<PlayerEventInfo> getPlayerEventInfoList()
 	{
 		List<PlayerEventInfo> playerEventInfoListCopy = new ArrayList<>();
-		playerEventInfoListCopy.forEach(playerEventInfo -> playerEventInfoListCopy.add(new PlayerEventInfo(playerEventInfo)));
+		playerEventInfoList.forEach(playerEventInfo -> playerEventInfoListCopy.add(new PlayerEventInfo(playerEventInfo)));
 		return playerEventInfoListCopy;
 	}
 

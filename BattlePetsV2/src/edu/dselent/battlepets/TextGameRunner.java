@@ -40,7 +40,7 @@ import jneat.Network;
 public class TextGameRunner implements GameRunner
 {
 	private Population createPopulation() {
-		int popSize = 75;
+		int popSize = 100;
 		
 		// 3 opponent type
 		// 3 its type
@@ -71,7 +71,7 @@ public class TextGameRunner implements GameRunner
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
-		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
+		PetTypes my_type = PetTypes.POWER;//.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -99,7 +99,7 @@ public class TextGameRunner implements GameRunner
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
-		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
+		PetTypes my_type = PetTypes.POWER;//values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -125,7 +125,7 @@ public class TextGameRunner implements GameRunner
 	private List<PlayerInfo> createRandomVOrgInfoList(){
 		List<PlayerInfo> playerInfoList = new ArrayList<>();
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
-		PetTypes my_type = PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
+		PetTypes my_type = PetTypes.POWER;//PetTypes.values()[(new Random()).nextInt(PetTypes.values().length)];
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -177,6 +177,17 @@ public class TextGameRunner implements GameRunner
 		}
 		return opponents;
 	}
+	
+	private List<PlayerInfo> createPlayerInfoRandomly(){
+		int rand = (new Random()).nextInt(8);
+		if(rand == 0) 
+			return this.createRandomVOrgInfoList();
+		else if(rand == 1)
+			return this.createOrgVOrgInfoList();
+		else
+			return this.createJarvisVOrgInfoList();
+	}
+	
 	@Override
 	public void runGame()
 	{
@@ -218,7 +229,7 @@ public class TextGameRunner implements GameRunner
 		
 		System.out.println(opponents.toString());
 		
-		neatPop = this.createPopulation();
+		//neatPop = this.createPopulation();
 		
 		List<Double> fitnesses = new ArrayList<Double>();
 		
@@ -228,7 +239,7 @@ public class TextGameRunner implements GameRunner
 				Organism _org = (Organism) iterOrgs.next();
 				int numSimulations = 0;
 				GameSettings gameSettings = new GameSettings(r.nextInt(10000), numPlayers, fightCount);
-				List<PlayerInfo> playerInfoList = this.createRandomVOrgInfoList();// this.createOrgVOrgInfoList();
+				List<PlayerInfo> playerInfoList = this.createRandomVOrgInfoList();
 				List<Playable> playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, _org);
 				TextBattleControl battleControl = new TextBattleControl(gameSettings, playableList);
 				double fitness = runSimulation(battleControl, playableList);

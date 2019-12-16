@@ -7,7 +7,7 @@ public enum PlayerTypes
 	HUMAN,
 	COMPUTER,
 	JARVIS,
-	AVERAGE_JOE;
+	MLC;
 	// Add more here
 	
 	@Override
