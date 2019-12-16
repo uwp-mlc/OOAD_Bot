@@ -182,12 +182,12 @@ public class MLC_Instance extends PetInstance {
         try
         {    
             // Reading the object from a file 
-            FileInputStream file = new FileInputStream("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\saved_net_jarvis.ser"); 
+            FileInputStream file = new FileInputStream("C:\\Users\\nickl\\Documents\\OOAD_Bot\\BattlePetsV2\\saved_net_final2.ser"); 
             ObjectInputStream in = new ObjectInputStream(file); 
               
             // Method for deserialization of object 
             net = (Network)in.readObject(); 
-              
+            
             in.close(); 
             file.close();
         } 
