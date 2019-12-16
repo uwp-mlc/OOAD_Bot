@@ -70,7 +70,6 @@ public class TextGameRunner implements GameRunner
 		PlayerInfoBuilder playerInfoBuilder = new PlayerInfoBuilder();
 		
 		PetTypes my_type = PetTypes.POWER;//.values()[(new Random()).nextInt(PetTypes.values().length)];
-		//System.out.println(my_type.toString());
 		PlayerInfo playerInfo = playerInfoBuilder.withPlayerType(PlayerTypes.AVERAGE_JOE)
 				.withPetType(my_type)
 				.withPlayerName("Garrett")
@@ -216,9 +215,7 @@ public class TextGameRunner implements GameRunner
 			Organism s = (Organism)o;
 			System.out.println("BEST ORG FITNESS: " + s.getFitness());
 		}
-		
-		this.saveNetwork(this.getBestOrganismFromSpecies(neatPop).getNet());
-		
+
 		HashMap<Species, List<Organism>> opponents = new HashMap<Species, List<Organism>>();
 		for(Object o : neatPop.getSpecies()) {
 			Species s = (Species)o;
