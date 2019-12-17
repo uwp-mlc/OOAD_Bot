@@ -195,7 +195,6 @@ public class TextGameRunner implements GameRunner
 		Inputtable textInputtable = new TextInputGetter();
 		Outputtable textOutputtable = new TextOutputSender();
 		IoManager textIoManager = new IoManager(textInputtable, textOutputtable);
-		Organism best = null;
 
 		ApplicationConfigurations.INSTANCE.setIoManager(textIoManager);
 		
@@ -206,6 +205,7 @@ public class TextGameRunner implements GameRunner
 		//List<PlayerInfo> playerInfoList = playerSettingsControl.retrievePlayerInfoList();
 		
 		Random r = new Random();
+		Organism best = null;
 		
 		int numPlayers = 2;
 		int fightCount = 1;
@@ -225,7 +225,7 @@ public class TextGameRunner implements GameRunner
 //				opponents = addOpponent(opponents, s, s.getBest_Organism(), trainingGenerationLen);
 //		}
 		int generation = 0;
-		int maxGenerations = 500;
+		int maxGenerations = 1000;
 		
 		System.out.println(opponents.toString());
 		
@@ -259,11 +259,13 @@ public class TextGameRunner implements GameRunner
 							List<Organism> orgList = new ArrayList<Organism>();
 							orgList.add(_org);
 							orgList.add(o);
+							
 							playerInfoList = this.createOrgVOrgInfoList();
 							playableList = PlayableInstantiator.instantiatePlayables(playerInfoList, orgList);
 							battleControl = new TextBattleControl(gameSettings, playableList);
-							
-							fitness += runSimulation(battleControl, playableList);
+							double healthDiff = runSimulation(battleControl, playableList);
+							if(healthDiff > 0)
+								fitness += o.getFitness() * (healthDiff / playableList.get(0).getStartingHp());
 						}
 						
 					}
@@ -284,7 +286,7 @@ public class TextGameRunner implements GameRunner
 //					}
 				}
 				
-				fitness = fitness / (numSimulations + 2);
+				fitness = fitness / (trainingGenerationLen + 2);
 				_org.setFitness(fitness);
 				fitnesses.add(fitness);
 				if(fitness > 0) {
@@ -313,15 +315,25 @@ public class TextGameRunner implements GameRunner
 //			}
 			neatPop.print_to_file_by_species("SavedPopulationCKPT_5.txt");
 			if(opponents.size() >= trainingGenerationLen) {
-				opponents.remove(0);
+				Organism org = this.getBestOrganismFromSpecies(neatPop);
+				for(int i = 0; i < opponents.size(); i++) {
+					if(opponents.get(i).getFitness() < org.getFitness()) {
+						opponents.remove(i);
+						opponents.add(org);
+						break;
+					}
+				}
+			} else {
+				opponents.add(this.getBestOrganismFromSpecies(neatPop));
 			}
-			opponents.add(this.getBestOrganismFromSpecies(neatPop));
-			
-			this.saveNetwork(this.getBestOrganismFromSpecies(neatPop).getNet());
 			neatPop.epoch(generation++);
 			System.out.println("Finished Generation: " + generation);
 		}
-
+		for(int i = 0; i < opponents.size(); i++) {
+			if(best == null || opponents.get(i).getFitness() > best.getFitness())
+				best = opponents.get(i);
+		}
+		this.saveNetwork(best.getNet());
 		System.out.println("\n" + fitnesses.toString());
 		System.out.println("Species size: " + neatPop.getSpecies().size());
 		for(Object o : neatPop.getSpecies()) {
